@@ -1,9 +1,13 @@
 package es.ual.acg.cos.ws;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.xml.bind.annotation.XmlElement;
 
 import org.jboss.logging.Logger;
 
@@ -12,6 +16,7 @@ import es.ual.acg.cos.ws.types.CreateUserParams;
 import es.ual.acg.cos.ws.types.CreateUserResult;
 import es.ual.acg.cos.ws.types.DeleteUserParams;
 import es.ual.acg.cos.ws.types.DeleteUserResult;
+import es.ual.acg.cos.ws.types.QueryProfileResult;
 import es.ual.acg.cos.ws.types.QueryUserParams;
 import es.ual.acg.cos.ws.types.QueryUserResult;
 import es.ual.acg.cos.ws.types.UpdateUserParams;
@@ -70,7 +75,36 @@ public class UserWSImpl implements UserWS{
 		  
 		  return queryUserResult;
 	}
-		  	
+
+	public QueryProfileResult queryProfile(String privatekey)	{
+		  
+		QueryProfileResult queryProfileResult = new QueryProfileResult();	
+		  //First: check the private key
+		  if(privatekey!=null && this.privatekey.compareTo(privatekey) == 0) {
+		  
+			  	  		Context initialContext;
+			  	  		try { 		  
+			  	  			initialContext = new InitialContext();	
+			  	  			UIM profileInformation = (UIM)initialContext.lookup("java:app/cos/UIM");		
+			  	  			queryProfileResult = profileInformation.queryProfile();
+				  		}
+				  		catch (NamingException e) {
+				  			LOGGER.error(e);
+				  			queryProfileResult.setValidation(false);
+				  			queryProfileResult.setProfiles(null);
+				  			queryProfileResult.setMessage("> Internal Server Error");
+				  			
+				  		}
+		  }else {
+			  queryProfileResult.setValidation(false);
+			  queryProfileResult.setProfiles(null);
+			  queryProfileResult.setMessage("> Private key Error");
+		    LOGGER.error("Private key error");   
+		  }
+
+		  return queryProfileResult;
+	}	
+	
 	public DeleteUserResult deleteUser(DeleteUserParams params, String privatekey)	{
 			  
 			DeleteUserResult deleteUserResult = new DeleteUserResult();

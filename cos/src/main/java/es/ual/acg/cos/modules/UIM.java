@@ -3,6 +3,8 @@ package es.ual.acg.cos.modules;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.Stateful;
 import javax.naming.Context;
@@ -17,6 +19,7 @@ import es.ual.acg.cos.types.InterModulesData;
 import es.ual.acg.cos.ws.types.CreateUserParams;
 import es.ual.acg.cos.ws.types.CreateUserResult;
 import es.ual.acg.cos.ws.types.DeleteUserResult;
+import es.ual.acg.cos.ws.types.QueryProfileResult;
 import es.ual.acg.cos.ws.types.QueryUserParams;
 import es.ual.acg.cos.ws.types.QueryUserResult;
 import es.ual.acg.cos.ws.types.UpdateUserResult;
@@ -140,6 +143,40 @@ public class UIM {
 			
 		return result;
 	}
+
+	public QueryProfileResult queryProfile() {
+		QueryProfileResult result = new QueryProfileResult();
+		List<String> perfiles = new ArrayList<String>();
+		
+		result.setValidation(false);
+		result.setProfiles(null);
+		result.setMessage("> Not found o Empty profile Error");
+			
+		try {
+			        
+		    Context initialContext;
+			initialContext = new InitialContext();
+			ManageUsers mu = (es.ual.acg.cos.controllers.ManageUsers)initialContext.lookup("java:app/cos/ManageUsers");
+			perfiles=mu.queryProfile();
+			
+			if(perfiles.get(0) != null) {
+				result.setValidation(true);
+				result.setProfiles(perfiles);
+				result.setMessage("> Successfully request");
+			}
+
+		} catch (SQLException e){
+			LOGGER.error(e);
+			result.setMessage("> " + e);
+		} catch (ClassNotFoundException e){
+			LOGGER.error(e);
+			result.setMessage("> Internal Server Error");
+		} catch (NamingException e) {
+			LOGGER.error(e);
+			result.setMessage("> Internal Server Error");
+		}
+		return result;
+	}
 	
 	public InterModulesData queryCamUser(String userID){
 		Context initialContext;
@@ -168,7 +205,33 @@ public class UIM {
 		}
 		return resultquerycam;
 	}
-	
+	public InterModulesData queryCamProfile(String profileName){
+		Context initialContext;
+		InterModulesData resultquerycam = new InterModulesData();
+		resultquerycam.setValue("-1");
+		
+		try {
+			initialContext = new InitialContext();
+			ManageUsers mu = (es.ual.acg.cos.controllers.ManageUsers)initialContext.lookup("java:app/cos/ManageUsers");
+
+			String cam = mu.queryCamProfile(profileName);
+
+			resultquerycam.setValue(cam); //Devuelve el cam
+			resultquerycam.setMessage("> CAM OK");
+
+			
+		} catch (NamingException e) {
+			LOGGER.error(e);
+			resultquerycam.setMessage("> Internal Server Error");
+		} catch (SQLException e){
+			LOGGER.error(e);
+			resultquerycam.setMessage("> " + e);
+		} catch (ClassNotFoundException e){
+			LOGGER.error(e);
+			resultquerycam.setMessage("> Internal Server Error");
+		}
+		return resultquerycam;
+	}
 	public DeleteUserResult deleteUser(String userID) {
 		DeleteUserResult result = new DeleteUserResult();
 		boolean queryresult;

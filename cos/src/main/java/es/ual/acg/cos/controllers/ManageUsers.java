@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
 public class ManageUsers {
@@ -86,6 +88,46 @@ public class ManageUsers {
 
 			return id_resultado;
 	}
+	public String queryCamProfile(String Profilename) throws ClassNotFoundException, SQLException{
+		String camid_resultado = "-1";
+		initialize();
+		ResultSet rs;
+		Statement s = (Statement) conn.createStatement();
+
+		rs = s.executeQuery("Select camid From coscoreprofile Where profile_name = '"
+				+ Profilename + "'");
+		if (rs.next()) {
+			camid_resultado = rs.getString(1);
+		} 
+
+		rs.close();
+		conn.close();
+
+		return camid_resultado;
+}
+	
+	public List<String> queryProfile() throws ClassNotFoundException, SQLException{
+		List<String> perfiles = new ArrayList<String>();
+
+		initialize();
+		ResultSet rs;
+		Statement s = (Statement) conn.createStatement();
+
+		rs = s.executeQuery("Select profile_name From coscoreprofile");
+		if (rs.next()) {
+			perfiles.add(rs.getString("profile_name"));
+			while (rs.next())
+			{
+				perfiles.add(rs.getString("profile_name"));
+			}
+		}else{
+			perfiles.set(0, null);
+		}
+		rs.close();
+		conn.close();
+
+		return perfiles;
+}
 	
 	public boolean deleteUser(String userId) throws Exception{
 		boolean response;

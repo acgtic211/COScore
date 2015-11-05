@@ -10,6 +10,7 @@ import es.ual.acg.cos.ws.types.CreateUserParams;
 import es.ual.acg.cos.ws.types.CreateUserResult;
 import es.ual.acg.cos.ws.types.DeleteUserParams;
 import es.ual.acg.cos.ws.types.DeleteUserResult;
+import es.ual.acg.cos.ws.types.QueryProfileResult;
 import es.ual.acg.cos.ws.types.QueryUserParams;
 import es.ual.acg.cos.ws.types.QueryUserResult;
 import es.ual.acg.cos.ws.types.UpdateUserParams;
@@ -40,6 +41,12 @@ public interface UserWS {
 	@WebResult(name="result", targetNamespace="http://ws.cos.acg.ual.es/") @XmlElement(required=true) 
 	public UpdateUserResult updateUser(
 		@WebParam(name="params", targetNamespace="http://ws.cos.acg.ual.es/") @XmlElement(required=true) UpdateUserParams params,
+		@WebParam(name="privatekey", targetNamespace="http://ws.cos.acg.ual.es/") @XmlElement(required=true) String privatekey);
+
+	
+	@WebMethod(operationName="queryProfile", action="queryProfile")
+	@WebResult(name="result", targetNamespace="http://ws.cos.acg.ual.es/") @XmlElement(required=true) 
+	public QueryProfileResult queryProfile(
 		@WebParam(name="privatekey", targetNamespace="http://ws.cos.acg.ual.es/") @XmlElement(required=true) String privatekey);
 
 }

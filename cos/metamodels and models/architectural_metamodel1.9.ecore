@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="architectural_metamodel" nsURI="http://architectural_metamodel/1.9"
+    nsPrefix="architectural_metamodel">
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractComponent">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="componentName" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="interface" lowerBound="1"
+        upperBound="-1" eType="#//Interface" containment="true" eOpposite="#//Interface/component"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="componentAlias" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="componentType" lowerBound="1"
+        eType="#//ComponentType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aam" eType="#//AbstractArchitecturalModel"
+        eOpposite="#//AbstractArchitecturalModel/abstractComponent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bSource" upperBound="-1"
+        eType="#//Binary" eOpposite="#//Binary/source"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bTarget" upperBound="-1"
+        eType="#//Binary" eOpposite="#//Binary/target"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Port" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="portID" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cc" lowerBound="1" eType="#//ConcreteComponent"
+        eOpposite="#//ConcreteComponent/port"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Connector">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="connectorID" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="#//InputPort" eOpposite="#//InputPort/cTarget"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+        eType="#//OutputPort" eOpposite="#//OutputPort/cSource"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dependency" lowerBound="1"
+        eType="#//ConcreteDependency" eOpposite="#//ConcreteDependency/connector"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Relationship" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="relationshipID" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aam" eType="#//AbstractArchitecturalModel"
+        eOpposite="#//AbstractArchitecturalModel/relationship"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cam" eType="#//ConcreteArchitecturalModel"
+        eOpposite="#//ConcreteArchitecturalModel/relationship"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="BinaryType">
+    <eLiterals name="association"/>
+    <eLiterals name="composition" value="2"/>
+    <eLiterals name="dependence" value="4"/>
+    <eLiterals name="inheritance" value="5"/>
+    <eLiterals name="producerconsumer" value="9"/>
+    <eLiterals name="___" value="10"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="NaryType">
+    <eLiterals name="sequence" value="1"/>
+    <eLiterals name="hierarchy" value="2"/>
+    <eLiterals name="trading" value="3"/>
+    <eLiterals name="observer" value="4"/>
+    <eLiterals name="controller" value="5"/>
+    <eLiterals name="___" value="6"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Binary" eSuperTypes="#//Relationship">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="#//BinaryType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isBidirectional" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="naryRelationship" eType="#//Nary"
+        eOpposite="#//Nary/bRelationship"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+        eType="#//AbstractComponent" eOpposite="#//AbstractComponent/bSource"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="#//AbstractComponent" eOpposite="#//AbstractComponent/bTarget"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dependency" lowerBound="1"
+        upperBound="-1" eType="#//AbstractDependency" containment="true" eOpposite="#//AbstractDependency/bRelationship"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Nary" eSuperTypes="#//Relationship">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="#//NaryType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bRelationship" lowerBound="2"
+        upperBound="-1" eType="#//Binary" eOpposite="#//Binary/naryRelationship"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractArchitecturalModel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="abstractComponent" upperBound="-1"
+        eType="#//AbstractComponent" containment="true" eOpposite="#//AbstractComponent/aam"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="relationship" upperBound="-1"
+        eType="#//Relationship" containment="true" eOpposite="#//Relationship/aam"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="aamID" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConcreteArchitecturalModel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="concreteComponent" upperBound="-1"
+        eType="#//ConcreteComponent" containment="true" eOpposite="#//ConcreteComponent/cam"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aam" lowerBound="1" eType="#//AbstractArchitecturalModel"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="camID" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="relationship" upperBound="-1"
+        eType="#//Relationship" containment="true" eOpposite="#//Relationship/cam"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="aamID" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConcreteComponent" eSuperTypes="#//AbstractComponent">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cam" lowerBound="1" eType="#//ConcreteArchitecturalModel"
+        eOpposite="#//ConcreteArchitecturalModel/concreteComponent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="runtimeProperty" upperBound="-1"
+        eType="#//RuntimeProperty" containment="true" eOpposite="#//RuntimeProperty/cc"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="port" lowerBound="1" upperBound="-1"
+        eType="#//Port" containment="true" eOpposite="#//Port/cc"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="componentInstance" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral=""/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ComponentType">
+    <eLiterals name="normal"/>
+    <eLiterals name="container" value="1"/>
+    <eLiterals name="functional" value="2"/>
+    <eLiterals name="userInteraction" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InputPort" eSuperTypes="#//Port">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cTarget" upperBound="-1"
+        eType="#//Connector" eOpposite="#//Connector/target"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OutputPort" eSuperTypes="#//Port">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cSource" upperBound="-1"
+        eType="#//Connector" eOpposite="#//Connector/source"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RuntimeProperty">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cc" lowerBound="1" eType="#//ConcreteComponent"
+        eOpposite="#//ConcreteComponent/runtimeProperty"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="propertyID" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="propertyValue" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Interface" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="component" eType="#//AbstractComponent"
+        eOpposite="#//AbstractComponent/interface"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="interfaceID" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Provided" eSuperTypes="#//Interface">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dTarget" upperBound="-1"
+        eType="#//AbstractDependency" eOpposite="#//AbstractDependency/target"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Required" eSuperTypes="#//Interface">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dSource" upperBound="-1"
+        eType="#//AbstractDependency" eOpposite="#//AbstractDependency/source"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractDependency">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+        eType="#//Required" eOpposite="#//Required/dSource"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bRelationship" lowerBound="1"
+        eType="#//Binary" eOpposite="#//Binary/dependency"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="#//Provided" eOpposite="#//Provided/dTarget"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dependencyID" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConcreteDependency" eSuperTypes="#//AbstractDependency">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="connector" lowerBound="1"
+        upperBound="-1" eType="#//Connector" containment="true" eOpposite="#//Connector/dependency"/>
+  </eClassifiers>
+</ecore:EPackage>

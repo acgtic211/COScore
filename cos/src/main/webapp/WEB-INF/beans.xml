@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:jaxws="http://cxf.apache.org/jaxws"
+        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+        xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd 
+        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+        
+     <jaxws:endpoint 
+    	id="ManageArchitecturesWS" 
+       	implementor="es.ual.acg.cos.ws.ManageArchitecturesWSImpl" 
+        address="/ManageArchitecturesWS" />
+        
+     <jaxws:endpoint 
+    	id="RegisterWS" 
+       	implementor="es.ual.acg.cos.ws.RegisterWSImpl" 
+        address="/RegisterWS" />
+        
+      <jaxws:endpoint 
+    	id="CommunicationWS" 
+       	implementor="es.ual.acg.cos.ws.CommunicationWSImpl" 
+        address="/CommunicationWS" />
+        
+      <jaxws:endpoint 
+    	id="ComponentWS" 
+       	implementor="es.ual.acg.cos.ws.ComponentWSImpl" 
+        address="/ComponentWS" />
+        
+      <jaxws:endpoint 
+    	id="InteractionWS" 
+       	implementor="es.ual.acg.cos.ws.InteractionWSImpl" 
+        address="/InteractionWS" />
+        
+      <jaxws:endpoint 
+    	id="SessionWS" 
+       	implementor="es.ual.acg.cos.ws.SessionWSImpl" 
+        address="/SessionWS" />
+        
+      <jaxws:endpoint 
+    	id="UserWS" 
+       	implementor="es.ual.acg.cos.ws.UserWSImpl" 
+        address="/UserWS" />
+        
+</beans>

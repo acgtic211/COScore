@@ -370,27 +370,14 @@ public class ManageArchitectures {
 	    Query query = session.createQuery("FROM ConcreteArchitecturalModel WHERE camID = '" + camId + "'");
 	    List<?> cams = query.list();
 	    
-	    if(cams.size()>0){
+	    if(cams.size() > 0) {
 		    cam = (ConcreteArchitecturalModel) cams.get(0);
-	//	    cam = (ConcreteArchitecturalModel) cams.get(0);
 	   
 		    //Initialize CAM
-		    Hibernate.initialize(cam.getRelationship());
-		    for(Relationship r : cam.getRelationship()) {
-	    		if(r instanceof Binary) {
-	    			for(AbstractDependency ad : ((Binary) r).getDependency()){
-	    				ConcreteDependency cd = (AbstractDependency) ad;
-	    				//adHibernate.initialize(ad.get);	
-	    			}
-	    			Hibernate.initialize(((InputPort)p).getCTarget());
-	    		} else {
-	    			Hibernate.initialize(((OutputPort)p).getCSource());
-	    		}
-		    }
-		    Hibernate.initialize(cam.getConcreteComponent());
+		    //Hibernate.initialize(cam.getConcreteComponent());
 		    for(ConcreteComponent cc : cam.getConcreteComponent()) {
 		    	Hibernate.initialize(cc.getRuntimeProperty());
-		    	Hibernate.initialize(cc.getPort());
+		    	//Hibernate.initialize(cc.getPort());
 		    	for(Port p : cc.getPort()) {
 		    		if(p instanceof InputPort) {
 		    			Hibernate.initialize(((InputPort)p).getCTarget());
@@ -399,6 +386,19 @@ public class ManageArchitectures {
 		    		}
 		    	}
 		    }
+		    //Hibernate.initialize(cam.getRelationship());
+        for(Relationship r : cam.getRelationship()) {
+          if(r instanceof Binary) {
+            for(AbstractDependency ad : ((Binary) r).getDependency()){              
+              ConcreteDependency cd = ConcreteDependency.class.cast(ad);
+              //Hibernate.initialize(cd.getConnector());
+              for(Connector conn : cd.getConnector()) {
+                Hibernate.initialize(conn.getSource());
+                Hibernate.initialize(conn.getTarget());
+              }
+            }
+          }
+        }
 	    }
 	    //Close session
 	    session.close();

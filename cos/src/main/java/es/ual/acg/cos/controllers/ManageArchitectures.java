@@ -40,9 +40,12 @@ import architectural_metamodel.ConcreteComponent;
 import architectural_metamodel.ConcreteDependency;
 import architectural_metamodel.Connector;
 import architectural_metamodel.InputPort;
+import architectural_metamodel.Interface;
 import architectural_metamodel.Nary;
 import architectural_metamodel.OutputPort;
 import architectural_metamodel.Port;
+import architectural_metamodel.Provided;
+import architectural_metamodel.Required;
 import architectural_metamodel.Relationship;
 import architectural_metamodel.RuntimeProperty;
 import architectural_metamodel.impl.RuntimePropertyImpl;
@@ -66,7 +69,7 @@ public class ManageArchitectures {
   // @OneToMany(mappedBy = "suite", cascade =
   // javax.persistence.CascadeType.REMOVE)
   private void initializeDataStore() {
-    LOGGER.info("[ManageDB] Creating DataStore...");
+    LOGGER.info("[ManageArchitectures] Creating DataStore...");
 
     Properties hibernateProperties = new Properties();
 
@@ -111,6 +114,11 @@ public class ManageArchitectures {
     // To resolve the error "deleted object would be re-saved by cascade"
     hibernateProperties.setProperty("teneo.mapping.fetch_containment_eagerly",
         "true");
+    /***************************
+     * 
+     * La linea de abajo se descomentara cuando nos aseguremos que todos los errores de de lectura y escritura del modelo este controlado
+     * El metodo donde estan las inicializaciones es readModel
+     */
     // hibernateProperties.setProperty("teneo.mapping.fetch_one_to_many_extra_lazy",
     // "true");
     // hibernateProperties.setProperty("teneo.runtime.handle_unset_as_null",
@@ -392,7 +400,17 @@ public class ManageArchitectures {
       // Initialize CAM
       // Hibernate.initialize(cam.getConcreteComponent());
       for (ConcreteComponent cc : cam.getConcreteComponent()) {
-        Hibernate.initialize(cc.getRuntimeProperty());
+    	 // Hibernate.initialize(cc.getInterface());
+    	  for(Interface in : cc.getInterface()){
+    		  if (in instanceof Provided) {
+    	            Hibernate.initialize(((Provided) in).getDTarget());
+    	          } else {
+    	            Hibernate.initialize(((Required) in).getDSource());
+    	          }
+    	  }
+    	  Hibernate.initialize(cc.getBSource()); 
+    	  Hibernate.initialize(cc.getBTarget()); 
+    	  Hibernate.initialize(cc.getRuntimeProperty());
         // Hibernate.initialize(cc.getPort());
         for (Port p : cc.getPort()) {
           if (p instanceof InputPort) {
@@ -408,6 +426,8 @@ public class ManageArchitectures {
           for (AbstractDependency ad : ((Binary) r).getDependency()) {
             ConcreteDependency cd = ConcreteDependency.class.cast(ad);
             // Hibernate.initialize(cd.getConnector());
+            Hibernate.initialize(cd.getSource());
+            Hibernate.initialize(cd.getTarget());
             for (Connector conn : cd.getConnector()) {
               Hibernate.initialize(conn.getSource());
               Hibernate.initialize(conn.getTarget());

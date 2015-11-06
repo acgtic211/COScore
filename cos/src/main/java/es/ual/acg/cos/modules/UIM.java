@@ -16,9 +16,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.jboss.logging.Logger;
 
 import architectural_metamodel.ConcreteArchitecturalModel;
+import architectural_metamodel.ConcreteComponent;
 import es.ual.acg.cos.controllers.ManageArchitectures;
 import es.ual.acg.cos.controllers.ManageUsers;
+import es.ual.acg.cos.controllers.ManageWookie;
 import es.ual.acg.cos.types.InterModulesData;
+import es.ual.acg.cos.wookie.WidgetData;
 import es.ual.acg.cos.ws.types.CreateUserParams;
 import es.ual.acg.cos.ws.types.CreateUserResult;
 import es.ual.acg.cos.ws.types.DeleteUserResult;
@@ -43,6 +46,9 @@ public class UIM {
 	public CreateUserResult createUser(CreateUserParams params) {
 		CreateUserResult result = new CreateUserResult();
 		InterModulesData resultquerycamprofile = new InterModulesData();
+		WidgetData widgetData = null;
+		String componentName = "";
+    	String componentAlias = "";
 		result.setCreated(false);
 		
 		String userName = params.getUserName();
@@ -72,12 +78,99 @@ public class UIM {
 				ManageArchitectures ma = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
 				cam = ma.readModel(camID);
 				if(cam != null){
-				  //Clonar objeto antes de guardarlo en la base de datos
-				  ConcreteArchitecturalModel camCopy = EcoreUtil.copy(cam);
+					//Clonar objeto antes de guardarlo en la base de datos
+					ConcreteArchitecturalModel camCopy = EcoreUtil.copy(cam);
 				  
-				  camCopy.setCamID(camidforUser);
-					ma.saveModel(camCopy);
+				  	camCopy.setCamID(camidforUser);
+					//Cambiamos las intancias de lo componentes de la copia del modelo para este nuevo usuario
+					//camID camidforUser
+					//cam camCopy
+				  	try{
+					    for (int i = 0; i < camCopy.getConcreteComponent().size(); i++) {
+					    	componentName = camCopy.getConcreteComponent().get(i).getComponentName();
+					    	componentAlias = camCopy.getConcreteComponent().get(i).getComponentAlias();
+		
+					    	ManageWookie wookie = (es.ual.acg.cos.controllers.ManageWookie)initialContext.lookup("java:app/cos/ManageWookie");
+							
+							widgetData = wookie.getOrCreateWidgetInstance(userName, componentName, componentAlias);
+							LOGGER.info("[DMM - initGUI] instance ID: " + widgetData.getIdentifier());	
+							//Update the information of this component
+
+							camCopy.getConcreteComponent().get(i).setComponentInstance(widgetData.getIdentifier());
+							
+							//Cambiamos los servicios tambien
+							int numeroServicios = 0;
+							for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
+								if ( camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).getPropertyID().
+									 equalsIgnoreCase("numero_servicios")) {
+									
+									numeroServicios = Integer.parseInt(camCopy.getConcreteComponent().get(i).
+								        			  getRuntimeProperty().get(j).getPropertyValue());
+								}
+							}
+							if(numeroServicios > 1){ //Si hay servicios agrupados
+								for (int k = 1; k <= numeroServicios; k++) {
+								    String service = "";
+								    String serviciopropiedad= "";
+								    String instaciaservicio= "";
+								    String nameservicio= "";
+								    String aliasservicio= "";
+									for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
+										String property = camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).
+												          getPropertyID();
+									    if (property.length() > 9)
+										        service = property.substring(0, 8);
+	
+										if (service.equalsIgnoreCase("servicio"+k)) {
+										        serviciopropiedad = property.substring(10, 14);
+										        if (service.equalsIgnoreCase("name")) 
+										        	nameservicio = camCopy.getConcreteComponent().get(i).
+								        			  getRuntimeProperty().get(j).getPropertyValue();
+										        if (service.equalsIgnoreCase("alia")) 
+										        	aliasservicio = camCopy.getConcreteComponent().get(i).
+								        			  getRuntimeProperty().get(j).getPropertyValue();
+										 }
+									}
+									widgetData = wookie.getOrCreateWidgetInstance(userName, nameservicio, aliasservicio);
+									LOGGER.info("[DMM - initGUI] instance ID: " + widgetData.getIdentifier());
+									instaciaservicio=widgetData.getIdentifier();
+									for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
+										String property = camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).
+												          getPropertyID();
+									    if (property.length() > 9)
+										        service = property.substring(0, 8);
+	
+										if (service.equalsIgnoreCase("servicio"+k)) {
+										        serviciopropiedad = property.substring(10, 14);
+										        if (service.equalsIgnoreCase("inst")) 
+										        	camCopy.getConcreteComponent().get(i).
+										        			  getRuntimeProperty().get(j).setPropertyValue(instaciaservicio);
+
+										 }
+									}
+								}
+							}
+							
+							//cambiamos la instamncia del servicio base
+							for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
+								String property = camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).getPropertyID();
+							    
+								if (property.equalsIgnoreCase("servicio0.instancia")) {
+									camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).
+								        setPropertyValue(widgetData.getIdentifier());;
+								 }
+							}
+								
+						}//For para cada componente
+
+					} catch (Exception e) {
+						LOGGER.error("> Error in Wookie");
+						result.setMessage("> Internal Server Error");
+					}
+				  	
+				    ma.saveModel(camCopy);					
 					
+					//Ya tenemos el cam creado asi que creamos el usuario con su cam correspondiente
 					ManageUsers mu = (es.ual.acg.cos.controllers.ManageUsers)initialContext.lookup("java:app/cos/ManageUsers");
 					mu.createUser(userName, userPassword, userProfile, camidforUser);
 					

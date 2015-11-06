@@ -326,14 +326,14 @@ public DefaultInitSessionResult initAnonimous(){
 			
 			paramsCreateAnonimous.setUserName(anonymousname);
 			paramsCreateAnonimous.setUserPassword("anonymous");
-			paramsCreateAnonimous.setUserProfile("anonymousprofile");
+			paramsCreateAnonimous.setUserProfile("anonymousprofile"); //Este perfil debe existir en la base de datos
 			
 			CreateUserResult resultCreateAnonimous = uim.createUser(paramsCreateAnonimous);
 			
 			if(resultCreateAnonimous.isCreated() == true){ //Comprobamos que se ha creado
 				
 				//LOGIN USUARIO ANONIMO
-				LoginSessionResult resultLogin = this.initializeModules(anonymousname, "anonimous");
+				LoginSessionResult resultLogin = this.initializeModules(anonymousname, "anonymous");
 
 				if(resultLogin.isValidation()==true){ //Comprobamos Login
 	

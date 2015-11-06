@@ -12,6 +12,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.codec.binary.Hex;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.jboss.logging.Logger;
 
 import architectural_metamodel.ConcreteArchitecturalModel;
@@ -71,8 +72,11 @@ public class UIM {
 				ManageArchitectures ma = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
 				cam = ma.readModel(camID);
 				if(cam != null){
-					cam.setCamID(camidforUser);
-					ma.saveModel(cam);
+				  //Clonar objeto antes de guardarlo en la base de datos
+				  ConcreteArchitecturalModel camCopy = EcoreUtil.copy(cam);
+				  
+				  camCopy.setCamID(camidforUser);
+					ma.saveModel(camCopy);
 					
 					ManageUsers mu = (es.ual.acg.cos.controllers.ManageUsers)initialContext.lookup("java:app/cos/ManageUsers");
 					mu.createUser(userName, userPassword, userProfile, camidforUser);

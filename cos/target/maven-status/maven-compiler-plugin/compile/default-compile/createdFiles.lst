@@ -183,6 +183,7 @@ ccmm\impl\OperationImpl.class
 architectural_metamodel\util\Architectural_metamodelSwitch.class
 ccmm\impl\ControllerInterfaceImpl.class
 es\ual\acg\cos\types\ServicesData.class
+es\ual\acg\cos\ws\types\QueryProfileResult.class
 ccmm\impl\FunctionalImpl.class
 architectural_metamodel\Architectural_metamodelPackage.class
 acmm\impl\RequiredInterfaceImpl.class

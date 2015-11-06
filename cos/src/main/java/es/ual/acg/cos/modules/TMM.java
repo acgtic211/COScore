@@ -92,7 +92,7 @@ public class TMM {
 
 			if (result.isGotten()){
 				cam = ma.readModel(camID);
-		
+				if(cam != null){
 				EList<ConcreteComponent> comps = cam.getConcreteComponent();
 				LOGGER.info("COMPONENTS SIZE: " + comps.size());
 	
@@ -137,6 +137,11 @@ public class TMM {
 					}
 				}
 			}
+		}else{
+			LOGGER.error("> Error in Architectural Models DB ");
+			result.setGotten(false);
+			result.setMessage("> Error in Architectural Models DB ");
+		}
 			//result.setMessage("[TMM] Rounting Table created");
 			LOGGER.info("[TMM] Rounting Table created");
 			

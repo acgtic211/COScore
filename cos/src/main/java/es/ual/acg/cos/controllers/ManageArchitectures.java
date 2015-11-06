@@ -30,6 +30,7 @@ import org.xml.sax.InputSource;
 
 import es.ual.acg.cos.wookie.WidgetData;
 import architectural_metamodel.AbstractArchitecturalModel;
+import architectural_metamodel.AbstractDependency;
 import architectural_metamodel.Architectural_metamodelFactory;
 import architectural_metamodel.Architectural_metamodelPackage;
 import architectural_metamodel.Binary;
@@ -42,6 +43,7 @@ import architectural_metamodel.InputPort;
 import architectural_metamodel.Nary;
 import architectural_metamodel.OutputPort;
 import architectural_metamodel.Port;
+import architectural_metamodel.Relationship;
 import architectural_metamodel.RuntimeProperty;
 import architectural_metamodel.impl.RuntimePropertyImpl;
 
@@ -354,7 +356,7 @@ public class ManageArchitectures {
 	//There aren't error to return	
 	public ConcreteArchitecturalModel readModel(String camId) throws Exception{
 
-//		ConcreteArchitecturalModel cam = null;
+		ConcreteArchitecturalModel cam = null;
 	    //dataStore = hbDataStore;
 //	    try{
 	    SessionFactory sessionFactory = dataStore.getSessionFactory();
@@ -368,23 +370,36 @@ public class ManageArchitectures {
 	    Query query = session.createQuery("FROM ConcreteArchitecturalModel WHERE camID = '" + camId + "'");
 	    List<?> cams = query.list();
 	    
-	    ConcreteArchitecturalModel cam = (ConcreteArchitecturalModel) cams.get(0);
-//	    cam = (ConcreteArchitecturalModel) cams.get(0);
-   
-	    //Initialize CAM
-	    Hibernate.initialize(cam.getConcreteComponent());
-	    for(ConcreteComponent cc : cam.getConcreteComponent()) {
-	    	Hibernate.initialize(cc.getRuntimeProperty());
-	    	
-	    	for(Port p : cc.getPort()) {
-	    		if(p instanceof InputPort) {
+	    if(cams.size()>0){
+		    cam = (ConcreteArchitecturalModel) cams.get(0);
+	//	    cam = (ConcreteArchitecturalModel) cams.get(0);
+	   
+		    //Initialize CAM
+		    Hibernate.initialize(cam.getRelationship());
+		    for(Relationship r : cam.getRelationship()) {
+	    		if(r instanceof Binary) {
+	    			for(AbstractDependency ad : ((Binary) r).getDependency()){
+	    				ConcreteDependency cd = (AbstractDependency) ad;
+	    				//adHibernate.initialize(ad.get);	
+	    			}
 	    			Hibernate.initialize(((InputPort)p).getCTarget());
 	    		} else {
 	    			Hibernate.initialize(((OutputPort)p).getCSource());
 	    		}
-	    	}
+		    }
+		    Hibernate.initialize(cam.getConcreteComponent());
+		    for(ConcreteComponent cc : cam.getConcreteComponent()) {
+		    	Hibernate.initialize(cc.getRuntimeProperty());
+		    	Hibernate.initialize(cc.getPort());
+		    	for(Port p : cc.getPort()) {
+		    		if(p instanceof InputPort) {
+		    			Hibernate.initialize(((InputPort)p).getCTarget());
+		    		} else {
+		    			Hibernate.initialize(((OutputPort)p).getCSource());
+		    		}
+		    	}
+		    }
 	    }
-
 	    //Close session
 	    session.close();
 //	    }catch (Exception e){
@@ -393,6 +408,26 @@ public class ManageArchitectures {
 	    LOGGER.info("[ManageArchitectures - readModel] - cam: " + cam);
 	    
 	    return cam;
+	}
+
+	public void saveModel(ConcreteArchitecturalModel cam) throws Exception{
+
+	    SessionFactory sessionFactory = dataStore.getSessionFactory();
+	    
+	    //Open a new Session
+	    Session session = sessionFactory.openSession();
+	      
+	    //Start transaction
+	    session.beginTransaction();
+	    
+	    session.save(cam);
+	    
+		session.getTransaction().commit();
+	    //Close session
+	    session.close();
+
+	    LOGGER.info("[ManageArchitectures - saveModel] - cam: "+cam.getCamID());
+	    
 	}
 	
 	public String addComponent(String camID, ConcreteComponent concreteComponent, Port inputPort,

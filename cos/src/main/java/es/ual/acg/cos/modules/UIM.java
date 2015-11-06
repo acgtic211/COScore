@@ -14,6 +14,8 @@ import javax.naming.NamingException;
 import org.apache.commons.codec.binary.Hex;
 import org.jboss.logging.Logger;
 
+import architectural_metamodel.ConcreteArchitecturalModel;
+import es.ual.acg.cos.controllers.ManageArchitectures;
 import es.ual.acg.cos.controllers.ManageUsers;
 import es.ual.acg.cos.types.InterModulesData;
 import es.ual.acg.cos.ws.types.CreateUserParams;
@@ -39,6 +41,7 @@ public class UIM {
 	 */
 	public CreateUserResult createUser(CreateUserParams params) {
 		CreateUserResult result = new CreateUserResult();
+		InterModulesData resultquerycamprofile = new InterModulesData();
 		result.setCreated(false);
 		
 		String userName = params.getUserName();
@@ -54,24 +57,37 @@ public class UIM {
 		    byte[] mb = md.digest();
 		    userPassword = new String (Hex.encodeHex(mb));
 		    params.setUserPassword(userPassword);
-		        
-		    /******OJO,una vez realizado Perfiles de usuario hay que incluir este codigo aqui
 		    
-		    if(userProfile.equalsIgnoreCase("anonimousprofile")) {
-		    	camID = CamAnonimousDefault //El cam anonimo por defecto 
-			}else{
-				CamID = CamProfile //El cam asociado al pefil que haya elegido el usuario
-			}
-		     
-		    ****** Recordar que el CAM ahora mismo se mete a mano en ManageUSer */
-		    
-		    Context initialContext;
-			initialContext = new InitialContext();
-			ManageUsers mu = (es.ual.acg.cos.controllers.ManageUsers)initialContext.lookup("java:app/cos/ManageUsers");
-			mu.createUser(userName, userPassword, userProfile);
-			
-			result.setCreated(true);
-			result.setMessage("> Successfully created");
+		    resultquerycamprofile = queryCamProfile(userProfile);
+
+		    if(resultquerycamprofile.getValue().compareTo("-1") != 0) {
+		    	String camID = resultquerycamprofile.getValue();
+		    	String camidforUser = camID+userName; //Nuevo identificado de cam formado por el cam del perfil + el nombre de usuario
+			    Context initialContext;
+				initialContext = new InitialContext();
+
+				ConcreteArchitecturalModel cam;
+				
+				ManageArchitectures ma = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
+				cam = ma.readModel(camID);
+				if(cam != null){
+					cam.setCamID(camidforUser);
+					ma.saveModel(cam);
+					
+					ManageUsers mu = (es.ual.acg.cos.controllers.ManageUsers)initialContext.lookup("java:app/cos/ManageUsers");
+					mu.createUser(userName, userPassword, userProfile, camidforUser);
+					
+					result.setCreated(true);
+					result.setMessage("> Successfully created");
+				}else{
+					LOGGER.error("Cam no exist!");
+					result.setMessage("> Internal Server Error");
+				}
+				
+		    }else{
+				LOGGER.error("Profile no exist!");
+				result.setMessage("> Internal Server Error");
+		    }
         
 		} catch (NoSuchAlgorithmException e) {
 			LOGGER.error(e);
@@ -83,6 +99,9 @@ public class UIM {
 			LOGGER.error(e);
 			result.setMessage("> Internal Server Error");
 		} catch (NamingException e) {
+			LOGGER.error(e);
+			result.setMessage("> Internal Server Error");
+		} catch (Exception e) {
 			LOGGER.error(e);
 			result.setMessage("> Internal Server Error");
 		}

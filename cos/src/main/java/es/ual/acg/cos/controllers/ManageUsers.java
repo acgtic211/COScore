@@ -182,18 +182,8 @@ public class ManageUsers {
 		return true;
 	}*/
 	
-	
-	
-	
-	
-	
-	
-	/*******************************************************************************************************************
-	 * OJO!!!!!!!
-	 *
-	 *CAMID ESTA METIDO A MANO HAY QUE QUITARLO CUANDO SE IMPLEMENTE LA SELECCION DE PERFIL
-	 ************************************************************************************************************/
-	public void createUser(String userName, String userPassword, String userProfile) throws ClassNotFoundException, SQLException {
+
+	public void createUser(String userName, String userPassword, String userProfile, String camid) throws ClassNotFoundException, SQLException {
 		initialize();
 		Statement s = (Statement) conn.createStatement();
 		s.executeUpdate("Insert Into coscoreuser (user_name, user_password, user_profile, camid) Values ('"
@@ -202,7 +192,9 @@ public class ManageUsers {
 						+ userPassword
 						+ "', '"
 						+ userProfile
-						+ "', 'cam23')");
+						+ "', '"
+						+camid
+						+"')");
 		s.close();
 		conn.close();
 	}

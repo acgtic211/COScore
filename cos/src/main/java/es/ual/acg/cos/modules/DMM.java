@@ -93,6 +93,7 @@ public class DMM {
 	
 			    //this.setCAM(cam);
 			    cam = manageArchitectures.readModel(camID);
+			    if(cam != null){ //Si el cam existe
 		
 				for(int i = 0; i < cam.getConcreteComponent().size(); i++) {
 					String platform = queryComponentPlatform(cam.getConcreteComponent().get(i).getComponentName());
@@ -186,6 +187,12 @@ public class DMM {
 						}
 					}//fin caso Web
 				}//fin for
+			}//fin if
+			else{
+				LOGGER.error("> Error in Architectural Models BD2");
+				interModulesData.setMessage("> Error in Architectural Models BD2");
+				interModulesData.setValue("-1");	
+			}
 			}//fin if de cam correcto
 		} catch (Exception e) {
 			LOGGER.error(e);

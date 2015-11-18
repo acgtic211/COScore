@@ -5,14 +5,20 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -20,14 +26,18 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 import org.eclipse.emf.ecore.xmi.util.XMLProcessor;
+import org.eclipse.emf.teneo.PersistenceOptions;
 import org.eclipse.emf.teneo.hibernate.HbDataStore;
+import org.eclipse.emf.teneo.hibernate.HbHelper;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Environment;
 import org.jboss.logging.Logger;
 import org.xml.sax.InputSource;
 
 import acmm.AbstractComponentSpecification;
+import acmm.AcmmPackage;
 import architectural_metamodel.Architectural_metamodelFactory;
 import architectural_metamodel.RuntimeProperty;
 import architectural_metamodel.impl.RuntimePropertyImpl;
@@ -74,14 +84,95 @@ import ccmm.impl.VersionImpl;
 import ccmm.impl.WSDLSpecificationImpl;
 
 @Singleton
+@Startup
+@Lock(LockType.READ)
 public class ManageRegister
 {
 	private HbDataStore dataStoreAC;
 	private HbDataStore dataStoreCC;
+	private boolean dataStoreACOn = false;
+	private boolean dataStoreCCOn = true;
 	
 	private static final Logger LOGGER = Logger.getLogger(ManageRegister.class);
 	
-	
+	@PostConstruct
+	private void initializateDataStores()
+	{
+		if(dataStoreCCOn)
+		  this.initializeDataStoreCC();
+		if(dataStoreACOn)
+		  this.initializeDataStoreAC();		
+	}
+	//There aren't error to return
+		private void initializeDataStoreAC() {
+			
+			LOGGER.info("[ManageDB - initializeDataStoreAC] Creating DataStoreAC...");
+			
+			Properties hibernateProperties = new Properties();
+
+			String dbName = "abstractcomponents";
+			
+			hibernateProperties.setProperty(Environment.DRIVER, "org.postgresql.Driver");
+			hibernateProperties.setProperty(Environment.USER, "postgres");
+			hibernateProperties.setProperty(Environment.URL, "jdbc:postgresql://150.214.150.116:5432/" + dbName);
+			hibernateProperties.setProperty(Environment.PASS, "root");
+			hibernateProperties.setProperty(Environment.DIALECT, org.hibernate.dialect.PostgreSQL81Dialect.class.getName());
+
+			hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT, "REFRESH,PERSIST,MERGE");
+			hibernateProperties.setProperty(PersistenceOptions.INHERITANCE_MAPPING, "JOINED");		
+			
+			hibernateProperties.setProperty("hibernate.c3p0.idle_test_period", "1800" );
+
+			final String dataStoreName = "AbstractComponents";
+			dataStoreAC = HbHelper.INSTANCE.createRegisterDataStore(dataStoreName);
+			dataStoreAC.setDataStoreProperties(hibernateProperties);
+
+			dataStoreAC.setEPackages(new EPackage[] { AcmmPackage.eINSTANCE });
+
+			dataStoreAC.initialize();
+			
+			LOGGER.info("[ManageDB] DataStoreAC has been created");
+		}
+		
+		//There aren't error to return
+		private void initializeDataStoreCC() {
+			
+			LOGGER.info("[ManageDB - initializeDataStoreAC] Creating DataStoreCC...");
+			
+			Properties hibernateProperties = new Properties();
+
+			String dbName = "concretecomponentsjesus33";
+			
+			hibernateProperties.setProperty(Environment.DRIVER, "org.postgresql.Driver");
+			hibernateProperties.setProperty(Environment.USER, "postgres");
+			hibernateProperties.setProperty(Environment.URL, "jdbc:postgresql://150.214.150.116:5432/" + dbName);
+			hibernateProperties.setProperty(Environment.PASS, "root");
+			hibernateProperties.setProperty(Environment.DIALECT, org.hibernate.dialect.PostgreSQL81Dialect.class.getName());
+
+			hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT, "REFRESH,PERSIST,MERGE");
+			hibernateProperties.setProperty(PersistenceOptions.INHERITANCE_MAPPING, "JOINED");
+			
+			// No crear tablas intermedias
+			hibernateProperties.setProperty(PersistenceOptions.JOIN_TABLE_FOR_NON_CONTAINED_ASSOCIATIONS,"false");
+			
+			// Without e_version in the tables
+		    hibernateProperties.setProperty("teneo.mapping.always_version","false");
+		    
+		    // Without e_container in the tables
+		    hibernateProperties.setProperty("teneo.mapping.disable_econtainer","true");
+		    
+		    hibernateProperties.setProperty("hibernate.c3p0.idle_test_period", "1800" );
+
+			final String dataStoreName = "ConcreteComponents";
+			dataStoreCC = HbHelper.INSTANCE.createRegisterDataStore(dataStoreName);
+			dataStoreCC.setDataStoreProperties(hibernateProperties);
+
+			dataStoreCC.setEPackages(new EPackage[] { CcmmPackage.eINSTANCE });
+
+			dataStoreCC.initialize();
+			
+			LOGGER.info("[ManageDB] DataStoreCC has been created");
+		}
 	private String convertToXml(EObject eObject){
 		
         String result = "";
@@ -106,7 +197,10 @@ public class ManageRegister
 		String componentName = cc.getComponentName();
 		LOGGER.info("Read CC ID: " + componentName);
 		
-		getDataStoreCCFromManageDB();
+//public HbDataStore getDataStoreCC() {
+
+	
+		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -167,7 +261,7 @@ public class ManageRegister
 		
 		if(cc != null)
 		{
-			getDataStoreCCFromManageDB();
+			//getDataStoreCCFromManageDB();
 			
 			SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -212,7 +306,7 @@ public class ManageRegister
 			String repositoryURI, String componentURI, String[] propertyId, String[] propertyValue, boolean[] isEditable,
 			String dependencyInterfaceId, String[] requiredProvided, String[] interfaceId,	String[] interfaceDescription, String[] anyUri)	{
 		
-		getDataStoreCCFromManageDB();
+		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -462,7 +556,7 @@ public class ManageRegister
 	
 	private Contact queryContact(String personName){
 		
-		getDataStoreCCFromManageDB();
+		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -490,7 +584,7 @@ public class ManageRegister
 	
     private Marketing queryMarketing(String entityId){
 		
-		getDataStoreCCFromManageDB();
+		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -517,7 +611,7 @@ public class ManageRegister
     
     private Implementation queryImplementation(String programmingLanguage){
 		
-		getDataStoreCCFromManageDB();
+		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -544,7 +638,7 @@ public class ManageRegister
     
     private Location queryLocation(String repositoryID){
 		
-		getDataStoreCCFromManageDB();
+		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -585,7 +679,7 @@ public class ManageRegister
 		
 		if(acs != null)
 		{
-			getDataStoreACFromManageDB();
+			//getDataStoreACFromManageDB();
 			
 			SessionFactory sessionFactory = dataStoreAC.getSessionFactory();
 
@@ -646,53 +740,68 @@ public class ManageRegister
 	    return cc;
 	}
 	
-	private void getDataStoreCCFromManageDB()
-	{
-		dataStoreCC = null;
-		
-		ManageDB managdb = null;
-		Context initialContext;
-		try
-		{
-			initialContext = new InitialContext();
-			
-			managdb = (ManageDB)initialContext.lookup("java:module/ManageDB");
-			dataStoreCC = managdb.getDataStoreCC();
-		}
-		catch (NamingException e) {
-			e.printStackTrace();
-		}
-		
-		if(dataStoreCC == null)
-			LOGGER.info("[Register] Error getting the DataStoreCC");
-		
+//	private void getDataStoreCCFromManageDB()
+//	{
+//		dataStoreCC = null;
+//		
+//		ManageDB managdb = null;
+//		Context initialContext;
+//		try
+//		{
+//			initialContext = new InitialContext();
+//			
+//			managdb = (ManageDB)initialContext.lookup("java:module/ManageDB");
+//			dataStoreCC = managdb.getDataStoreCC();
+//		}
+//		catch (NamingException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		if(dataStoreCC == null)
+//			LOGGER.info("[Register] Error getting the DataStoreCC");
+//		
+//	}
+	@Lock(LockType.READ)
+	public HbDataStore getDataStoreCC() {
+		return dataStoreCC;
+	}
+
+	public void setDataStoreCC(HbDataStore dataStoreCC) {
+		this.dataStoreCC = dataStoreCC;
 	}
 	
-	private void getDataStoreACFromManageDB()
-	{
-		dataStoreAC = null;
-		
-		ManageDB managdb = null;
-		Context initialContext;
-		try
-		{
-			initialContext = new InitialContext();
-			
-			managdb = (ManageDB)initialContext.lookup("java:module/ManageDB");
-			dataStoreAC = managdb.getDataStoreAC();
-		}
-		catch (NamingException e) {
-			e.printStackTrace();
-		}
-		
-		if(dataStoreAC == null)
-			LOGGER.info("[Register] Error getting the DataStoreAC");
-		
+//	private void getDataStoreACFromManageDB()
+//	{
+//		dataStoreAC = null;
+//		
+//		ManageDB managdb = null;
+//		Context initialContext;
+//		try
+//		{
+//			initialContext = new InitialContext();
+//			
+//			managdb = (ManageDB)initialContext.lookup("java:module/ManageDB");
+//			dataStoreAC = managdb.getDataStoreAC();
+//		}
+//		catch (NamingException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		if(dataStoreAC == null)
+//			LOGGER.info("[Register] Error getting the DataStoreAC");
+//		
+//	}
+	@Lock(LockType.READ)
+	public HbDataStore getDataStoreAC() {
+		//initializeDataStoreAC();
+		return dataStoreAC;
 	}
-	
+
+	public void setDataStoreAC(HbDataStore dataStoreAC) {
+		this.dataStoreAC = dataStoreAC;
+	}
 	public EObject convertXMIStringToEObject(String xmiString) throws IOException {
         XMIResourceImpl resource = new XMIResourceImpl();
-        //resource.setEncoding("UTF-8");
         resource.setEncoding("UTF-8");
         resource.load(new InputSource(new StringReader(xmiString)), null);
  
@@ -703,7 +812,7 @@ public class ManageRegister
 	{
 		String result = "";
 		
-		getDataStoreCCFromManageDB();
+		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -748,7 +857,7 @@ public class ManageRegister
 	{
 		String result = "";
 		
-		getDataStoreACFromManageDB();
+		//getDataStoreACFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreAC.getSessionFactory();
 
@@ -789,7 +898,7 @@ public class ManageRegister
 	}
 	
 	public String queryComponentPlatform(String componentName) throws Exception{
-		getDataStoreCCFromManageDB();
+		//getDataStoreCCFromManageDB();
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
 		//Open a new Session
@@ -947,7 +1056,7 @@ public class ManageRegister
 	}
 	
 	public List<RuntimeProperty> readComponentProperty(String componentName)throws Exception{
-		getDataStoreCCFromManageDB();
+		//getDataStoreCCFromManageDB();
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
 		//Open a new Session
@@ -971,11 +1080,6 @@ public class ManageRegister
 		listRuntimeProperty.add(runtimePropertyPlatform);
 		
 		for(int i = 0; i < listProperties.size(); i++) {
-//			LOGGER.info("Componente -> " + ((ConcreteComponentSpecification) ccs.get(0)).getComponentName() + 
-//					" - Nombre propiedad -> " + listProperties.get(i).getPropertyID().getName() +
-//					" - Literal de propiedad -> " + listProperties.get(i).getPropertyID().getLiteral() + 
-//					" - Valor de propiedad -> " + listProperties.get(i).getPropertyValue());
-			
 			
 			if(listProperties.get(i).getPropertyID().getName().equalsIgnoreCase("width")){
 				RuntimeProperty runtimePropertyTamanoX =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
@@ -992,22 +1096,12 @@ public class ManageRegister
 					if(listProperties.get(i).getPropertyID().getName().equalsIgnoreCase("groupable")){
 						RuntimeProperty runtimePropertyGroupable =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
 						runtimePropertyGroupable.setPropertyID("servicio_agrupable");
-						/*if(listProperties.get(i).getPropertyValue().equalsIgnoreCase("true")){
-							runtimePropertyGroupable.setPropertyValue("1");
-						}else{
-							runtimePropertyGroupable.setPropertyValue("0");
-						}*/
 						runtimePropertyGroupable.setPropertyValue(listProperties.get(i).getPropertyValue());
 						listRuntimeProperty.add(runtimePropertyGroupable);
 					} else {
 						if(listProperties.get(i).getPropertyID().getName().equalsIgnoreCase("maximizable")){
 							RuntimeProperty runtimePropertyMaximizable =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
 							runtimePropertyMaximizable.setPropertyID("servicio_maximizable");
-							/*if(listProperties.get(i).getPropertyValue().equalsIgnoreCase("true")){
-								runtimePropertyMaximizable.setPropertyValue("1");
-							}else{
-								runtimePropertyMaximizable.setPropertyValue("0");
-							}*/
 							runtimePropertyMaximizable.setPropertyValue(listProperties.get(i).getPropertyValue());
 							listRuntimeProperty.add(runtimePropertyMaximizable);
 						} else {
@@ -1029,49 +1123,9 @@ public class ManageRegister
 				}
 			}
 		}
-		
-		// IMPORTANTE ESTAS LÍNEAS SE DEBEN DE QUITAR CUANDO SE MODIFIQUE EL MODELO DE COMPONENTE CONCRETO Y 
-		// SE ACTUALICE LA BASE DE DATOS DE COMPONENTES
-		
-//		RuntimeProperty runtimePropertyPlatform =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
-//		runtimePropertyPlatform.setPropertyID("platform");
-//		runtimePropertyPlatform.setPropertyValue("web");
-//		listRuntimeProperty.add(runtimePropertyPlatform);
-//		
-//		RuntimeProperty runtimePropertyTamanoX =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
-//		runtimePropertyTamanoX.setPropertyID("tamanoX");
-//		runtimePropertyTamanoX.setPropertyValue("5");
-//		listRuntimeProperty.add(runtimePropertyTamanoX);
-//		
-//		RuntimeProperty runtimePropertyTamanoY =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
-//		runtimePropertyTamanoY.setPropertyID("tamanoY");
-//		runtimePropertyTamanoY.setPropertyValue("6");
-//		listRuntimeProperty.add(runtimePropertyTamanoY);
-//		
-//		RuntimeProperty runtimePropertyGroupable =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
-//		runtimePropertyGroupable.setPropertyID("agrupable");
-//		runtimePropertyGroupable.setPropertyValue("1");
-//		listRuntimeProperty.add(runtimePropertyGroupable);
-//		
-//		RuntimeProperty runtimePropertyMaximizable =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
-//		runtimePropertyMaximizable.setPropertyID("maximizable");
-//		runtimePropertyMaximizable.setPropertyValue("1");
-//		listRuntimeProperty.add(runtimePropertyMaximizable);
-//		
-//		RuntimeProperty runtimePropertyMapaKML =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
-//		runtimePropertyMapaKML.setPropertyID("servicio0.mapa_KML");
-//		runtimePropertyMapaKML.setPropertyValue("http://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_Inventario_VVPP?");
-//		listRuntimeProperty.add(runtimePropertyMapaKML);
-//		
-//		RuntimeProperty runtimePropertyCapa =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
-//		runtimePropertyCapa.setPropertyID("servicio0.capa");
-//		runtimePropertyCapa.setPropertyValue("Inventario_VVPP");
-//		listRuntimeProperty.add(runtimePropertyCapa);
-		
 		//Close the session.
 		session.close();		
 		
 		return listRuntimeProperty;
 	}
-	
 }

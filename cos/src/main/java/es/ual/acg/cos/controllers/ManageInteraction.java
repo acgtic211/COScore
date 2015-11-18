@@ -23,7 +23,6 @@ import org.jboss.logging.Logger;
 
 import ccmm.ConcreteComponentSpecification;
 import es.ual.acg.cos.controllers.ManageArchitectures;
-import es.ual.acg.cos.controllers.ManageDB;
 import es.ual.acg.cos.types.ComponentData;
 import architectural_metamodel.Architectural_metamodelFactory;
 import architectural_metamodel.ConcreteArchitecturalModel;
@@ -351,13 +350,13 @@ public class ManageInteraction {
 	public void getDataStoreCCFromManageDB() {
 		dataStoreCC = null;
 		
-		ManageDB managdb = null;
+		ManageRegister managdb = null;
 		Context initialContext;
 		try
 		{
 			initialContext = new InitialContext();
 			
-			managdb = (ManageDB)initialContext.lookup("java:module/ManageDB");
+			managdb = (ManageRegister)initialContext.lookup("java:module/ManageRegister");
 			dataStoreCC = managdb.getDataStoreCC();
 		}
 		catch (NamingException e) {

@@ -24,7 +24,6 @@ import org.jboss.logging.Logger;
 
 import ccmm.ConcreteComponentSpecification;
 import es.ual.acg.cos.controllers.ManageArchitectures;
-import es.ual.acg.cos.controllers.ManageDB;
 import es.ual.acg.cos.controllers.ManageInteraction;
 import es.ual.acg.cos.controllers.ManageJava;
 import es.ual.acg.cos.controllers.ManageWookie;

@@ -21,7 +21,6 @@ import org.jboss.logging.Logger;
 
 import ccmm.ConcreteComponentSpecification;
 import es.ual.acg.cos.controllers.ManageArchitectures;
-import es.ual.acg.cos.controllers.ManageDB;
 import es.ual.acg.cos.controllers.ManageUsers;
 import es.ual.acg.cos.controllers.ManageWookie;
 import es.ual.acg.cos.wookie.WidgetData;

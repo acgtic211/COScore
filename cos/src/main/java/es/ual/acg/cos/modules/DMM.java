@@ -106,22 +106,7 @@ public class DMM {
 						ConcreteComponent cc = cam.getConcreteComponent().get(i);
 						
 						try {
-//							//InitialContext initialContext = new InitialContext();
-//							ManageWookie wookie = (es.ual.acg.cos.controllers.ManageWookie)initialContext.lookup("java:app/cos/ManageWookie");
-//							
-//
-//							widgetData = wookie.getOrCreateWidgetInstance(userID, componentName, componentAlias);
-//		
-//							String widgetTitle = widgetData.getTitle();
-//							LOGGER.info("[DMM - initGUI] title: " + widgetTitle);
-//							
-//							String instanceID = widgetData.getIdentifier();
-//							LOGGER.info("[DMM - initGUI] instance ID: " + instanceID);
-//							//String instanceURL = widgetData.getUrl();
-//							//String codeHTML = composeDiv(widgetTitle,  componentName, instanceID, instanceURL, userID);
-//							//String codeHTML = composeDiv(instanceURL);
-
-							
+						
 							if(componentInstance == null ||	componentInstance.equalsIgnoreCase("")){
 								//InitialContext initialContext = new InitialContext();
 								ManageWookie wookie = (es.ual.acg.cos.controllers.ManageWookie)initialContext.lookup("java:app/cos/ManageWookie");
@@ -164,9 +149,6 @@ public class DMM {
 									Integer.parseInt(readRuntimeProperty(cc.getRuntimeProperty(), "posy")), 
 									Integer.parseInt(readRuntimeProperty(cc.getRuntimeProperty(), "tamanox")), 
 									Integer.parseInt(readRuntimeProperty(cc.getRuntimeProperty(), "tamanoy")),
-									//maximizableService, groupableService, 
-									//Integer.parseInt(readRuntimeProperty(cc.getRuntimeProperty(), "numero_servicios")),
-									//listServicesData(cc.getRuntimeProperty())));
 									maximizableService, groupableService, nServices,
 									listServicesData(nServices, cc.getRuntimeProperty())));
 							
@@ -218,120 +200,6 @@ public class DMM {
 		return value;
 	}
 
-	/*private List<ServicesData> listServicesData(List<RuntimeProperty> propertyList) {
-		List<ServicesData> listServicesData = new ArrayList<ServicesData>();
-
-		boolean end = false;
-		int nService = 0;
-		for(int i = 0; i < propertyList.size() && end == false; i++){
-			String property = propertyList.get(i).getPropertyID();
-			String service = "";
-
-			if(property.length() > 9)
-				service = property.substring(0, 9);
-
-			if(service.equalsIgnoreCase("servicio"+nService)){
-
-				String componentname = "";
-				String componentalias = "";
-				String instanceId = "";
-				String mapaKML = "";
-				String capa = "";
-				
-				StringTokenizer token = new StringTokenizer(property, ".");
-				token.nextToken();
-				String element1 = token.nextToken();
-				if(element1.equalsIgnoreCase("id_componente")){
-					componentname = propertyList.get(i).getPropertyValue();
-				} else {
-					if(element1.equalsIgnoreCase("alias_componente")){
-						componentalias = propertyList.get(i).getPropertyValue();
-					}else{
-						if(element1.equalsIgnoreCase("instancia")){
-							instanceId = propertyList.get(i).getPropertyValue();
-						} else {
-							if(element1.equalsIgnoreCase("mapa_KML")){
-								mapaKML = propertyList.get(i).getPropertyValue();
-							} else {
-								if(element1.equalsIgnoreCase("capa")){
-									capa = propertyList.get(i).getPropertyValue();
-								}
-							}
-						}
-					}
-				}
-		
-				
-				property = propertyList.get(i+1).getPropertyID();
-				token = new StringTokenizer(property, ".");
-				token.nextToken();
-				String element2 = token.nextToken();
-				if(element2.equalsIgnoreCase("id_componente")){
-					componentname = propertyList.get(i+1).getPropertyValue();
-				} else {
-					if(element2.equalsIgnoreCase("instancia")){
-						instanceId = propertyList.get(i+1).getPropertyValue();
-					} else {
-						if(element2.equalsIgnoreCase("mapa_KML")){
-							mapaKML = propertyList.get(i+1).getPropertyValue();
-						} else {
-							if(element2.equalsIgnoreCase("capa")){
-								capa = propertyList.get(i+1).getPropertyValue();
-							}
-						}
-					}
-				}
-				
-				property = propertyList.get(i+2).getPropertyID();
-				token = new StringTokenizer(property, ".");
-				token.nextToken();
-				String element3 = token.nextToken();
-				if(element3.equalsIgnoreCase("id_componente")){
-					componentname = propertyList.get(i+2).getPropertyValue();
-				} else {
-					if(element3.equalsIgnoreCase("instancia")){
-						instanceId = propertyList.get(i+2).getPropertyValue();
-					} else {
-						if(element3.equalsIgnoreCase("mapa_KML")){
-							mapaKML = propertyList.get(i+2).getPropertyValue();
-						} else {
-							if(element3.equalsIgnoreCase("capa")){
-								capa = propertyList.get(i+2).getPropertyValue();
-							}
-						}
-					}
-				}
-				
-				property = propertyList.get(i+3).getPropertyID();
-				token = new StringTokenizer(property, ".");
-				token.nextToken();
-				String element4 = token.nextToken();
-				if(element4.equalsIgnoreCase("id_componente")){
-					componentname = propertyList.get(i+3).getPropertyValue();
-				} else {
-					if(element4.equalsIgnoreCase("instancia")){
-						instanceId = propertyList.get(i+3).getPropertyValue();
-					} else {
-						if(element4.equalsIgnoreCase("mapa_KML")){
-							mapaKML = propertyList.get(i+3).getPropertyValue();
-						} else {
-							if(element4.equalsIgnoreCase("capa")){
-								capa = propertyList.get(i+3).getPropertyValue();
-							}
-						}
-					}
-				}
-
-				listServicesData.add(new ServicesData(componentname, instanceId, mapaKML, capa));
-				
-				nService ++;				
-				i = i + 3;
-			}
-		}
-		
-		return listServicesData;
-	}*/
-	
 	private List<ServicesData> listServicesData(int nServices, List<RuntimeProperty> propertyList) {
 		List<ServicesData> listServicesData = new ArrayList<ServicesData>();
 
@@ -1440,6 +1308,74 @@ public class DMM {
 		String divString = "<iframe allowfullscreen src=\"" + subStr + "\"></iframe>";
 
 		return divString;
+	}
+	public InterModulesData ReadModelforcamId(String camID) {
+		
+		InterModulesData interModulesData = new InterModulesData();
+		interModulesData.setValue("");
+		interModulesData.setModel(null);
+		interModulesData.setCam(null);
+		interModulesData.setWidget(null);
+		interModulesData.setMessage("> Cam OK");
+		
+		try {
+			Context initialContext;
+			initialContext = new InitialContext();
+			ManageArchitectures ma = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
+			
+			interModulesData.setCam( ma.readModel(camID) );
+
+		} catch (Exception e) {
+			LOGGER.error(e);
+			interModulesData.setMessage("> Error in Architectural Models BD " + e);
+			interModulesData.setValue("-1");
+		} 
+
+		return interModulesData;
+	}
+	public InterModulesData SaveModelforcamId(ConcreteArchitecturalModel cam) {
+		
+		InterModulesData interModulesData = new InterModulesData();
+		interModulesData.setValue("");
+		interModulesData.setModel(null);
+		interModulesData.setCam(null);
+		interModulesData.setWidget(null);
+		interModulesData.setMessage("> Cam OK");
+		
+		try {
+			Context initialContext;
+			initialContext = new InitialContext();
+			ManageArchitectures ma = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
+			ma.saveModel(cam);
+
+		} catch (Exception e) {
+			LOGGER.error(e);
+			interModulesData.setMessage("> Error in Architectural Models BD " + e);
+			interModulesData.setValue("-1");
+		} 
+
+		return interModulesData;
+	}
+	
+	public InterModulesData getWidget(String userID, String componentName, String componentAlias) {
+		InterModulesData interModulesData = new InterModulesData();
+		interModulesData.setValue("");
+		interModulesData.setModel(null);
+		interModulesData.setCam(null);
+		interModulesData.setWidget(null);
+		interModulesData.setMessage("> Widget OK");
+		try {
+			Context initialContext;
+			initialContext = new InitialContext();
+			ManageWookie wookie = (es.ual.acg.cos.controllers.ManageWookie)initialContext.lookup("java:app/cos/ManageWookie");
+			interModulesData.setWidget(wookie.getOrCreateWidgetInstance(userID, componentName, componentAlias));
+
+		} catch (Exception e) {
+			LOGGER.error(e);
+			interModulesData.setMessage("> Error in Wookie " + e);
+			interModulesData.setValue("-1");
+		}
+		return interModulesData;
 	}
 	
 	public ConcreteArchitecturalModel getCAM() {

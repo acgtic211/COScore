@@ -43,18 +43,17 @@ public class TMM {
 	
 	private HbDataStore dataStore;
 
-	public void initialize() {
-
-		if(dataStore == null) {
-			LOGGER.info("[TMM] Getting DataStore...");
-			this.getDataStoreFromManageDB();
-			LOGGER.info("[TMM] DataStore has been got");
-		}
-		else
-			LOGGER.info("[TMM] DataStore is already got");
-		
-		//this.createRountingTable();
-	}
+//	public void initialize() {
+//
+//		if(dataStore == null) {
+//			LOGGER.info("[TMM] Getting DataStore...");
+//			this.getDataStoreFromManageDB();
+//			LOGGER.info("[TMM] DataStore has been got");
+//		}
+//		else
+//			LOGGER.info("[TMM] DataStore is already got");
+//	
+//	}
 	
 
 	public GetLinksResult createRountingTable(String userID) {
@@ -87,11 +86,24 @@ public class TMM {
 		}
 		
 		try{
-			initialContext = new InitialContext();
-			ManageArchitectures ma = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
 
 			if (result.isGotten()){
-				cam = ma.readModel(camID);
+
+				//Leemos el modelo d la base de datos
+				initialContext = new InitialContext();
+				InterModulesData resultDMM = new InterModulesData();
+				try {
+					DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
+					resultDMM = dmm.ReadModelforcamId(camID);
+					cam = resultDMM.getCam();
+						
+				} catch (Exception e) {
+					LOGGER.error(e);
+					result.setGotten(false);
+					LOGGER.error("Profile no exist!");
+					result.setMessage(resultDMM.getMessage());
+				}
+				
 				if(cam != null){
 				EList<ConcreteComponent> comps = cam.getConcreteComponent();
 				LOGGER.info("COMPONENTS SIZE: " + comps.size());
@@ -238,27 +250,27 @@ public class TMM {
 //		}
 //	}
 	
-	public void getDataStoreFromManageDB() {
-		
-		dataStore = null;
-		
-		ManageArchitectures managArch = null;
-		Context initialContext;
-		try
-		{
-			initialContext = new InitialContext();
-			
-			managArch = (ManageArchitectures)initialContext.lookup("java:module/ManageArchitectures");
-			dataStore = managArch.getDataStore();
-		}
-		catch (Exception e) {
-			LOGGER.error(e);
-		}
-		
-		if(dataStore == null)
-			LOGGER.info("[TMM] Error getting the DataStore");
-		
-	}
+//	public void getDataStoreFromManageDB() {
+//		
+//		dataStore = null;
+//		
+//		ManageArchitectures managArch = null;
+//		Context initialContext;
+//		try
+//		{
+//			initialContext = new InitialContext();
+//			
+//			managArch = (ManageArchitectures)initialContext.lookup("java:module/ManageArchitectures");
+//			dataStore = managArch.getDataStore();
+//		}
+//		catch (Exception e) {
+//			LOGGER.error(e);
+//		}
+//		
+//		if(dataStore == null)
+//			LOGGER.info("[TMM] Error getting the DataStore");
+//		
+//	}
 	
 //	public ConcreteArchitecturalModel getCAM(){
 //		//PRUEBA DE CREACIÓN DE TABLA DE RUTAS

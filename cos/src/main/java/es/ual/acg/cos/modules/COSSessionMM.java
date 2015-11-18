@@ -20,7 +20,6 @@ import es.ual.acg.cos.users.SessionControl;
 import es.ual.acg.cos.users.UserEJBs;
 import es.ual.acg.cos.modules.DMM;
 import es.ual.acg.cos.modules.IMM;
-import es.ual.acg.cos.modules.LRMM;
 import es.ual.acg.cos.modules.TMM;
 import es.ual.acg.cos.types.InterModulesData;
 import es.ual.acg.cos.types.UserInteractionData;
@@ -185,22 +184,16 @@ public class COSSessionMM {
 								//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
 							}
 						}
-						
-						
 					}else{ //Errores producidos en DMM, ManageWookie y ManageArchitectures
 						result.setInit(false);
 						result.setComponentData(null);
 						result.setMessage(resultDMM.getMessage());
 					}
-					
-					//TMM tmm = userEJBMap.get(userID).getTMM();
-
 				}else{ //Errores producidos en UIM y en ManagerUSer
 					result.setInit(false);
 					result.setComponentData(null);
 					result.setMessage(resultUIM.getMessage());
 				}
-
 			} else {
 				result.setInit(false);
 				result.setComponentData(null);
@@ -216,96 +209,6 @@ public class COSSessionMM {
 		return result;
 	}
 	
-	
-//	try {
-//		Context	initialContext = new InitialContext();
-//		
-//		UIM uim = (UIM)initialContext.lookup("java:app/cos/UIM");
-//		
-//		QueryUserParams qup = new QueryUserParams();
-//		qup.setUserName(user);
-//		qup.setUserPassword(password);
-//		QueryUserResult qur = uim.queryUser(qup);
-//		
-//		//Realizo queryuser y compruebo valiacion correcta
-//		if(qur.isValidation() == true){
-//			
-//			//Inicializo las variables de sesión (los EJBS para el usuario validado)
-//			if(userEJBMap.containsKey(qur.getIduser()+"") == false){
-//				//UserEJBs uejb = new UserEJBs(qur.getIduser()+"");
-//				UserEJBs uejb = new UserEJBs();
-//				userEJBMap.put(qur.getIduser()+"", uejb);
-//				userTime.put(qur.getIduser()+"", System.currentTimeMillis());
-//				
-//				result.setValidation(true);
-//				result.setMessage("> Modules initialized");
-//				result.setUserId(qur.getIduser()+"");
-//			} else {
-//				result.setValidation(true); //El usuario es valido, pero no se puede inicializar 2 veces los modulos
-//				result.setMessage("> Error Modules previously initialized");
-//				result.setUserId(qur.getIduser()+"");
-//			}
-//		} else {
-//			result.setValidation(qur.isValidation());
-//			result.setMessage(qur.getMessage());
-//			result.setUserId(qur.getIduser()+"");
-//		}
-//
-//	} catch (NamingException e) {
-//		LOGGER.error(e);
-//		result.setValidation(false);
-//		result.setUserId("-1");
-//		result.setMessage("> Internal Server Error");
-//	}
-//			
-
-	
-	
-//	public RegisterInteractionResult registerInteractionforUsers(String userID, String idInstance,String action,String property,String value){
-//		RegisterInteractionResult result = new RegisterInteractionResult();
-//		LOGGER.info("########--------------------------------loadInteraction----------------------------------------------########");
-//		String result = null;
-//		TMM tmc = null;
-//		LRMM lrmc = null;
-//		DMM dmc = null;
-//		IMM imc = null;
-//		COSSessionMM cossmng = null;
-//		Context initialContext;
-//		try	{
-//			initialContext = new InitialContext();
-//			if(userEJBMap.containsKey(userID) == true){
-//				LRMM lrmm = userEJBMap.get(userID).getLRMM();
-//				IMM imm = userEJBMap.get(userID).getIMM();
-//				DMM dmm = userEJBMap.get(userID).getDMMS().get(0);
-//				TMM tmm = userEJBMap.get(userID).getTMM();
-//				
-//				
-//				// Update the used time last
-//				this.setTime(userID);
-//				//cossmng.setTime(userID);
-//	
-//				imm.loadInteraction(tmm.getCAM().getCamID(), idInstance, userID, action, property, value);
-//				
-//				imm.manageRuntimeProperty(idInstance, property, value);
-//				
-//				tmm.setCAM(imm.getCAM());
-//				lrmm.setCAM(imm.getCAM());
-//				dmm.setCAM(imm.getCAM());
-//				
-//				result.setRegistered(true);
-//				result.setMessage("> Sucessfully Register interaction");
-//			} else {
-//				result.setRegistered(false);
-//				result.setMessage("> Internal Server Error");
-//			}
-//		} catch (NamingException e) {
-//			LOGGER.error(e);
-//			result.setRegistered(false);
-//			result.setMessage("> Internal Server Error");
-//		}
-//		
-//		return result;
-//	}
 public DefaultInitSessionResult initAnonimous(){
 		
 	DefaultInitSessionResult result = new DefaultInitSessionResult();

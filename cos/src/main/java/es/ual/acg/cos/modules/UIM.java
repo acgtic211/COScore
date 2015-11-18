@@ -20,6 +20,7 @@ import architectural_metamodel.ConcreteComponent;
 import es.ual.acg.cos.controllers.ManageArchitectures;
 import es.ual.acg.cos.controllers.ManageUsers;
 import es.ual.acg.cos.controllers.ManageWookie;
+import es.ual.acg.cos.types.ComponentData;
 import es.ual.acg.cos.types.InterModulesData;
 import es.ual.acg.cos.wookie.WidgetData;
 import es.ual.acg.cos.ws.types.CreateUserParams;
@@ -47,6 +48,7 @@ public class UIM {
 		CreateUserResult result = new CreateUserResult();
 		InterModulesData resultquerycamprofile = new InterModulesData();
 		WidgetData widgetData = null;
+		ConcreteArchitecturalModel cam = null;
 		String componentName = "";
     	String componentAlias = "";
 		result.setCreated(false);
@@ -72,11 +74,18 @@ public class UIM {
 		    	String camidforUser = camID+userName; //Nuevo identificado de cam formado por el cam del perfil + el nombre de usuario
 			    Context initialContext;
 				initialContext = new InitialContext();
-
-				ConcreteArchitecturalModel cam;
+				InterModulesData resultDMM = new InterModulesData();
 				
-				ManageArchitectures ma = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
-				cam = ma.readModel(camID);
+				try {
+					DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
+					resultDMM = dmm.ReadModelforcamId(camID);
+					cam = resultDMM.getCam();
+						
+				} catch (Exception e) {
+					LOGGER.error(e);
+					result.setMessage(resultDMM.getMessage());
+				} 
+
 				if(cam != null){
 					//Clonar objeto antes de guardarlo en la base de datos
 					ConcreteArchitecturalModel camCopy = EcoreUtil.copy(cam);
@@ -89,13 +98,19 @@ public class UIM {
 					    for (int i = 0; i < camCopy.getConcreteComponent().size(); i++) {
 					    	componentName = camCopy.getConcreteComponent().get(i).getComponentName();
 					    	componentAlias = camCopy.getConcreteComponent().get(i).getComponentAlias();
-		
-					    	ManageWookie wookie = (es.ual.acg.cos.controllers.ManageWookie)initialContext.lookup("java:app/cos/ManageWookie");
 							
-							widgetData = wookie.getOrCreateWidgetInstance(userName, componentName, componentAlias);
-							LOGGER.info("[DMM - initGUI] instance ID: " + widgetData.getIdentifier());	
-							//Update the information of this component
-
+					    	//Obtenemos indentificador Wookie
+							try {
+								DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
+								resultDMM = dmm.getWidget(userName, componentName, componentAlias);
+								widgetData = resultDMM.getWidget();
+								LOGGER.info("[DMM - initGUI] instance ID: " + widgetData.getIdentifier());	
+									
+							} catch (Exception e) {
+								LOGGER.error(e);
+								result.setMessage(resultDMM.getMessage());
+							}
+							
 							camCopy.getConcreteComponent().get(i).setComponentInstance(widgetData.getIdentifier());
 							
 							//Cambiamos los servicios tambien
@@ -131,8 +146,18 @@ public class UIM {
 								        			  getRuntimeProperty().get(j).getPropertyValue();
 										 }
 									}
-									widgetData = wookie.getOrCreateWidgetInstance(userName, nameservicio, aliasservicio);
-									LOGGER.info("[DMM - initGUI] instance ID: " + widgetData.getIdentifier());
+									//Obtenemos indentificador Wookie
+									try {
+										DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
+										resultDMM = dmm.getWidget(userName, nameservicio, aliasservicio);
+										widgetData = resultDMM.getWidget();
+										LOGGER.info("[DMM - initGUI] instance ID: " + widgetData.getIdentifier());	
+											
+									} catch (Exception e) {
+										LOGGER.error(e);
+										result.setMessage(resultDMM.getMessage());
+									}
+
 									instaciaservicio=widgetData.getIdentifier();
 									for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
 										String property = camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).
@@ -167,9 +192,21 @@ public class UIM {
 						LOGGER.error("> Error in Wookie");
 						result.setMessage("> Internal Server Error");
 					}
-				  	
-				    ma.saveModel(camCopy);					
 					
+					try {
+						DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
+						resultDMM = dmm.SaveModelforcamId(camCopy);
+							
+					} catch (Exception e) {
+						LOGGER.error(e);
+						result.setMessage(resultDMM.getMessage());
+					} 
+				    
+				    
+				    
+				    
+				    
+				    
 					//Ya tenemos el cam creado asi que creamos el usuario con su cam correspondiente
 					ManageUsers mu = (es.ual.acg.cos.controllers.ManageUsers)initialContext.lookup("java:app/cos/ManageUsers");
 					mu.createUser(userName, userPassword, userProfile, camidforUser);

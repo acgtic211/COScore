@@ -108,7 +108,7 @@ LOGGER.info("5555555555");
 	}*/
 	
 	@SuppressWarnings("unchecked")
-  public WidgetData getOrCreateWidgetInstance(String userID, String widgetID, String widgetName) throws Exception {
+  public WidgetData getOrCreateWidgetInstance(String userID, String componentName, String componentAlias) throws Exception {
 		
     String result = "[ManageWookie - getOrCreateWidgetInstance] Error";
 
@@ -120,8 +120,8 @@ LOGGER.info("5555555555");
     MultivaluedMap formData = new MultivaluedMapImpl();
     formData.add("api_key", "TEST");
     formData.add("userid", userID);
-    formData.add("widgetid", widgetID);
-    formData.add("shareddatakey", widgetName);
+    formData.add("widgetid", componentName);
+    formData.add("shareddatakey", componentAlias);
     ClientResponse response = webResource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(ClientResponse.class, formData);
     result = response.getEntity(String.class);
         

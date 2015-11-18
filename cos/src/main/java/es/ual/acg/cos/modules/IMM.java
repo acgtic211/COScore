@@ -44,9 +44,9 @@ public class IMM {
 	private static final Logger LOGGER = Logger.getLogger(IMM.class);
 	
 	// Variable to connect with DB
-	Connection conn = null;
+	//Connection conn = null;
 	
-	private ConcreteArchitecturalModel cam;
+//	private ConcreteArchitecturalModel cam;
 
 	public InterModulesData registerinteraction(String newSession, String deviceType, String interactionType, String dateTime, String userId,
 			String latitude, String longitude, String operationPerformed, String componentId, List<String> groupComponent, List<String> ungroupComponent, 
@@ -346,11 +346,11 @@ public class IMM {
 //		
 //	}
 //
-	public ConcreteArchitecturalModel getCAM(){
-		return cam;
-	}
-
-	public void setCAM(ConcreteArchitecturalModel cam){
-		this.cam = cam;
-	}
+//	public ConcreteArchitecturalModel getCAM(){
+//		return cam;
+//	}
+//
+//	public void setCAM(ConcreteArchitecturalModel cam){
+//		this.cam = cam;
+//	}
 }

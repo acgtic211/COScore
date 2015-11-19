@@ -48,6 +48,7 @@ public class UIM {
 		CreateUserResult result = new CreateUserResult();
 		InterModulesData resultquerycamprofile = new InterModulesData();
 		WidgetData widgetData = null;
+		WidgetData widgetData2 = null;
 		ConcreteArchitecturalModel cam = null;
 		String componentName = "";
     	String componentAlias = "";
@@ -150,15 +151,15 @@ public class UIM {
 									try {
 										DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
 										resultDMM = dmm.getWidget(userName, nameservicio, aliasservicio);
-										widgetData = resultDMM.getWidget();
-										LOGGER.info("[DMM - initGUI] instance ID: " + widgetData.getIdentifier());	
+										widgetData2 = resultDMM.getWidget();
+										LOGGER.info("[DMM - initGUI] instance ID: " + widgetData2.getIdentifier());	
 											
 									} catch (Exception e) {
 										LOGGER.error(e);
 										result.setMessage(resultDMM.getMessage());
 									}
 
-									instaciaservicio=widgetData.getIdentifier();
+									instaciaservicio=widgetData2.getIdentifier();
 									for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
 										String property = camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).
 												          getPropertyID();
@@ -413,6 +414,14 @@ public class UIM {
 	}
 	public UpdateUserResult updateUser(String userID, String userName, String userPassword, String userProfile) {
 		UpdateUserResult result = new UpdateUserResult();
+		InterModulesData resultUIM = new InterModulesData();
+		InterModulesData resultDMM = new InterModulesData();
+		String camID;
+		WidgetData widgetData = null;
+		WidgetData widgetData2 = null;
+		ConcreteArchitecturalModel cam = null;
+		String componentName = "";
+    	String componentAlias = "";
 		boolean queryresult;
 		result.setUpdated(false);
 		result.setMessage("> Not found o Empty userid Error");
@@ -432,9 +441,167 @@ public class UIM {
 			queryresult=mu.updateUser(userID, userName, userPassword, userProfile);
 			
 			result.setUpdated(queryresult);
-			if (queryresult)
-				result.setMessage("> Successfully updated");
+			if (queryresult){
+				//ACTUALIZAR ID INSTANCIAS CON EL NUEVO USUARIO
+				//Cambiamos las intancias de lo componentes de la copia del modelo para este nuevo usuario
 
+				//Obtenemos el cam para ese usuario actualizado
+				resultUIM = this.queryCamUser(userID);
+				
+				if (!resultUIM.getValue().equalsIgnoreCase("-1")){ //Sino hay error en cam
+					camID = resultUIM.getValue();
+					
+
+					//Obtenemos el modelo para ese cam
+
+					try {
+						DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
+						resultDMM = dmm.ReadModelforcamId(camID);
+						cam = resultDMM.getCam();
+
+						
+					} catch (Exception e) {
+						LOGGER.error(e);
+						result.setMessage(resultDMM.getMessage());
+					} 
+
+					if(cam != null){
+					//Clonar objeto antes de guardarlo en la base de datos
+					ConcreteArchitecturalModel camCopy = EcoreUtil.copy(cam);
+				  	camCopy.setCamID(camID);
+				  	try{
+					    for (int i = 0; i < camCopy.getConcreteComponent().size(); i++) {
+					    	componentName = camCopy.getConcreteComponent().get(i).getComponentName();
+					    	componentAlias = camCopy.getConcreteComponent().get(i).getComponentAlias();
+							
+					    	//Obtenemos indentificador Wookie
+							try {
+								DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
+								resultDMM = dmm.getWidget(userName, componentName, componentAlias);
+								widgetData = resultDMM.getWidget();
+									
+							} catch (Exception e) {
+								LOGGER.error(e);
+								result.setMessage(resultDMM.getMessage());
+							}
+							
+							//Cambiamos el id de instancia del componente
+							camCopy.getConcreteComponent().get(i).setComponentInstance(widgetData.getIdentifier());
+							
+							//Cambiamos el id de instancia de los servicios del componente
+							
+							//Obtenemos el numero de servicios
+							int numeroServicios = 0;
+							for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
+								if ( camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).getPropertyID().
+									 equalsIgnoreCase("numero_servicios")) {
+									
+									numeroServicios = Integer.parseInt(camCopy.getConcreteComponent().get(i).
+								        			  getRuntimeProperty().get(j).getPropertyValue());
+								}
+							}
+							
+							if(numeroServicios > 1){ //Si hay servicios agrupados
+								for (int k = 1; k <= numeroServicios; k++) {
+								    String service = "";
+								    String serviciopropiedad= "";
+								    String instaciaservicio= "";
+								    String nameservicio= "";
+								    String aliasservicio= "";
+									for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
+										String property = camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).
+												          getPropertyID();
+									    if (property.length() > 9)
+										        service = property.substring(0, 8);
+	
+										if (service.equalsIgnoreCase("servicio"+k)) {
+										        serviciopropiedad = property.substring(10, 14);
+										        if (service.equalsIgnoreCase("name")) 
+										        	nameservicio = camCopy.getConcreteComponent().get(i).
+								        			  getRuntimeProperty().get(j).getPropertyValue();
+										        if (service.equalsIgnoreCase("alia")) 
+										        	aliasservicio = camCopy.getConcreteComponent().get(i).
+								        			  getRuntimeProperty().get(j).getPropertyValue();
+										 }
+									}
+									//Obtenemos indentificador Wookie
+									try {
+										DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
+										resultDMM = dmm.getWidget(userName, nameservicio, aliasservicio);
+										widgetData2 = resultDMM.getWidget();
+									} catch (Exception e) {
+										LOGGER.error(e);
+										result.setMessage(resultDMM.getMessage());
+									}
+
+									instaciaservicio=widgetData2.getIdentifier();
+									for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
+										String property = camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).
+												          getPropertyID();
+									    if (property.length() > 9)
+										        service = property.substring(0, 8);
+	
+										if (service.equalsIgnoreCase("servicio"+k)) {
+										        serviciopropiedad = property.substring(10, 14);
+										        if (service.equalsIgnoreCase("inst")) 
+										        	camCopy.getConcreteComponent().get(i).
+										        			  getRuntimeProperty().get(j).setPropertyValue(instaciaservicio);
+
+										 }
+									}
+								}
+							}
+							
+							//cambiamos la instamncia del servicio base
+							for (int j = 0; j < camCopy.getConcreteComponent().get(i).getRuntimeProperty().size(); j++) {
+								String property = camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).getPropertyID();
+							    
+								if (property.equalsIgnoreCase("servicio0.instancia")) {
+									camCopy.getConcreteComponent().get(i).getRuntimeProperty().get(j).
+								        setPropertyValue(widgetData.getIdentifier());;
+								 }
+							}
+								
+						}//For para cada componente
+
+					} catch (Exception e) {
+						LOGGER.error("> Error in Wookie");
+						result.setMessage("> Internal Server Error");
+					}
+					
+					try {
+						DMM dmm = (es.ual.acg.cos.modules.DMM)initialContext.lookup("java:app/cos/DMM");
+						
+						resultDMM = dmm.DeleteModelforcamId(camID); //Borramos el cam anterior para que no haya conflicto con el camID
+						
+						if (!resultDMM.getValue().equalsIgnoreCase("-1")){
+						
+							resultDMM = dmm.SaveModelforcamId(camCopy); //Salvamos el cam modificado
+						
+							if (!resultDMM.getValue().equalsIgnoreCase("-1")){
+								result.setMessage("> Successfully updated");
+							}else {
+								result.setUpdated(false);
+								result.setMessage(resultUIM.getMessage());
+								LOGGER.error(resultUIM.getMessage());
+							}
+						}else {
+							result.setUpdated(false);
+							result.setMessage(resultUIM.getMessage());
+							LOGGER.error(resultUIM.getMessage());
+						}
+							
+					} catch (Exception e) {
+						LOGGER.error(e);
+						result.setMessage(resultDMM.getMessage());
+					}
+				}
+				
+			}else{ //Errores producidos en UIM y en ManagerUSer
+				result.setUpdated(false);
+				result.setMessage(resultUIM.getMessage());
+			}
+		}
         
 		} catch (SQLException e){
 			LOGGER.error(e);

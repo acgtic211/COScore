@@ -1356,7 +1356,29 @@ public class DMM {
 
 		return interModulesData;
 	}
-	
+	public InterModulesData DeleteModelforcamId(String cam) {
+		
+		InterModulesData interModulesData = new InterModulesData();
+		interModulesData.setValue("");
+		interModulesData.setModel(null);
+		interModulesData.setCam(null);
+		interModulesData.setWidget(null);
+		interModulesData.setMessage("> Cam OK");
+		
+		try {
+			Context initialContext;
+			initialContext = new InitialContext();
+			ManageArchitectures ma = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
+			ma.withdrawCAM(cam);
+
+		} catch (Exception e) {
+			LOGGER.error(e);
+			interModulesData.setMessage("> Error in Architectural Models BD " + e);
+			interModulesData.setValue("-1");
+		} 
+
+		return interModulesData;
+	}
 	public InterModulesData getWidget(String userID, String componentName, String componentAlias) {
 		InterModulesData interModulesData = new InterModulesData();
 		interModulesData.setValue("");

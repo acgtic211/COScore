@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Lock;
@@ -21,7 +20,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.jboss.logging.Logger;
 
-import ccmm.ConcreteComponentSpecification;
 import es.ual.acg.cos.controllers.ManageArchitectures;
 import es.ual.acg.cos.types.ComponentData;
 import architectural_metamodel.Architectural_metamodelFactory;
@@ -170,72 +168,7 @@ public class ManageInteraction {
 				}
 			}
 		}
-
 	}
-	
-	/*private String makeInstanceId(String userId, String componentId, String componentName){
-		String platform = queryComponentPlatform(componentId);
-		String instanceId = null;
-		try{
-			if(platform.equalsIgnoreCase("Web")){
-				ManageWookie wookie = new ManageWookie();
-	
-				WidgetData widgetData = wookie.getOrCreateWidgetInstance(userId, componentId, componentName);
-				
-				instanceId = widgetData.getIdentifier();
-				
-			}else{
-				if(platform.equalsIgnoreCase("Java")){
-					ManageJava manageJava = new ManageJava();
-	
-					JavaComponentResponse r = manageJava.getOrCreateJavaInstance(userId, componentId, componentName);
-	
-					instanceId = r.getComponentInstanceName();
-				}
-				
-			}
-		} catch (Exception e) {
-			LOGGER.error(e);
-		}
-		return instanceId;
-	}*/
-	
-	/*@Lock(LockType.READ)
-	public void loadInteraction7(String modelId, String userId, String componentId, 
-			String componentName, String action, String position, String value) {
-		
-		String instanceId = makeInstanceId(userId, componentId, componentName);
-
-		componentId = componentId + "," + instanceId;
-		
-		try {
-			initialize();
-
-			Date dNow = new Date();
-			SimpleDateFormat ft = new SimpleDateFormat(
-					"E yyyy.MM.dd 'at' hh:mm:ss a zzz");
-
-			insertInteraction(modelId, componentId, userId, ft.format(dNow),
-					action, position, value);
-		} catch (Exception e) {
-		}
-	}*/
-
-
-	/*@Lock(LockType.READ)
-	public void loadInteraction6(String modelId, String componentId,
-			String userId, String action, String position, String value) {
-
-		try {
-			initialize();
-			Date dNow = new Date();
-			SimpleDateFormat ft = new SimpleDateFormat(
-					"E yyyy.MM.dd 'at' hh:mm:ss a zzz");
-			insertInteraction(modelId, componentId, userId, ft.format(dNow),
-					action, position, value);
-		} catch (Exception e) {
-		}
-	}*/
 	
 	@Lock(LockType.READ)
 	public void manageRuntimeProperty(String componentId, String property, String value)throws Exception{
@@ -255,7 +188,6 @@ public class ManageInteraction {
 		LOGGER.info("[IMM] manage runtime property CAM ID: " + cam.getCamID());
 		
 		//Initialize the component
-		//ConcreteComponent cc = new ConcreteComponentImpl();
 		ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE.createConcreteComponent();
 		
 		boolean foundComponent = false;
@@ -275,8 +207,6 @@ public class ManageInteraction {
 					}
 				}
 				if(foundProperty == false){
-
-					//RuntimeProperty rp = new RuntimePropertyImpl();
 				  RuntimeProperty rp = Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
 					rp.setCc(cc);
 					rp.setPropertyID(property);
@@ -297,34 +227,7 @@ public class ManageInteraction {
 		//Close the session.
 		session.close();
 	}
-	
-	/*private String queryComponentPlatform(String componentID) {
-		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
-
-		//Open a new Session
-		Session session = sessionFactory.openSession();
-		  
-		//Start transaction
-		session.beginTransaction();
-				
-		Query query = session.createQuery("FROM ConcreteComponentSpecification "
-				+ "WHERE componentID = '" + componentID + "'");
-
-		List<?> ccs = query.list();
-
-		LOGGER.info("PlataformType -> " + ((ConcreteComponentSpecification) ccs.get(0)).getPackaging().
-																getImplementation().getPlatformType());
-				  
-		//Close the session.
-		session.close();
 		
-		if(ccs.size() == 1)
-			return ((ConcreteComponentSpecification) ccs.get(0)).getPackaging().getImplementation().
-																			getPlatformType().toString();
-		else
-			return null;
-	}*/
-	
 	public void getDataStoreFromManageDB() {
 		dataStore = null;
 		
@@ -360,7 +263,7 @@ public class ManageInteraction {
 			dataStoreCC = managdb.getDataStoreCC();
 		}
 		catch (NamingException e) {
-			e.printStackTrace();
+			LOGGER.error("NamingException: " + e);
 		}
 		
 		if(dataStoreCC == null)

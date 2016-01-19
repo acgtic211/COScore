@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
@@ -21,20 +20,17 @@ import org.eclipse.emf.teneo.hibernate.HbDataStore;
 import org.eclipse.emf.teneo.hibernate.HbHelper;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Environment;
 import org.jboss.logging.Logger;
 import org.xml.sax.InputSource;
 
-import es.ual.acg.cos.wookie.WidgetData;
 import architectural_metamodel.AbstractArchitecturalModel;
 import architectural_metamodel.AbstractDependency;
 import architectural_metamodel.Architectural_metamodelFactory;
 import architectural_metamodel.Architectural_metamodelPackage;
 import architectural_metamodel.Binary;
-import architectural_metamodel.ComponentType;
 import architectural_metamodel.ConcreteArchitecturalModel;
 import architectural_metamodel.ConcreteComponent;
 import architectural_metamodel.ConcreteDependency;
@@ -66,71 +62,42 @@ public class ManageArchitectures {
       this.initializeDataStore();
   }
 
-  // @OneToMany(mappedBy = "suite", cascade =
-  // javax.persistence.CascadeType.REMOVE)
   private void initializeDataStore() {
     LOGGER.info("[ManageArchitectures] Creating DataStore...");
 
     Properties hibernateProperties = new Properties();
 
-    // String dbName = "architecturalmodels";
-    // String dbName = "architecturalmodelsjesus";
     String dbName = "architecturalmodelsjesus33";
 
-    //
-    hibernateProperties
-        .setProperty(Environment.DRIVER, "org.postgresql.Driver");
+    hibernateProperties.setProperty(Environment.DRIVER, "org.postgresql.Driver");
     hibernateProperties.setProperty(Environment.USER, "postgres");
-    hibernateProperties.setProperty(Environment.URL,
-        "jdbc:postgresql://150.214.150.116:5432/" + dbName);
+    hibernateProperties.setProperty(Environment.URL, "jdbc:postgresql://150.214.150.116:5432/" + dbName);
     hibernateProperties.setProperty(Environment.PASS, "root");
-    hibernateProperties.setProperty(Environment.DIALECT,
-        org.hibernate.dialect.PostgreSQL81Dialect.class.getName());
+    hibernateProperties.setProperty(Environment.DIALECT, org.hibernate.dialect.PostgreSQL81Dialect.class.getName());
 
-    // hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT,
-    // "REFRESH,PERSIST,MERGE");
-    hibernateProperties.setProperty(PersistenceOptions.INHERITANCE_MAPPING,
-        "JOINED");
-    // hibernateProperties.setProperty(PersistenceOptions.INHERITANCE_MAPPING,
-    // InheritanceType.SINGLE_TABLE.name());
-    // hibernateProperties.setProperty(PersistenceOptions.SET_DEFAULT_CASCADE_ON_NON_CONTAINMENT,"true");
+    hibernateProperties.setProperty(PersistenceOptions.INHERITANCE_MAPPING, "JOINED");
 
     // para insertar componentes
     // hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_CONTAINMENT,
     // "ALL");
-    hibernateProperties.setProperty(
-        PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT,
-        "MERGE,PERSIST,REFRESH,REMOVE");
+    hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT, "MERGE,PERSIST,REFRESH,REMOVE");
     // hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT,
     // "ALL");
 
     // No crear tablas intermedias
-    hibernateProperties.setProperty(
-        PersistenceOptions.JOIN_TABLE_FOR_NON_CONTAINED_ASSOCIATIONS, "false");
+    hibernateProperties.setProperty(PersistenceOptions.JOIN_TABLE_FOR_NON_CONTAINED_ASSOCIATIONS, "false");
 
     // Table by class, problems with insertion
     // hibernateProperties.setProperty("teneo.mapping.inheritance","TABLE_PER_CLASS");
 
     // To resolve the error "deleted object would be re-saved by cascade"
-    hibernateProperties.setProperty("teneo.mapping.fetch_containment_eagerly",
-        "true");
-    /***************************
-     * 
-     * La linea de abajo se descomentara cuando nos aseguremos que todos los errores de de lectura y escritura del modelo este controlado
-     * El metodo donde estan las inicializaciones es readModel
-     */
-    // hibernateProperties.setProperty("teneo.mapping.fetch_one_to_many_extra_lazy",
-    // "true");
-    // hibernateProperties.setProperty("teneo.runtime.handle_unset_as_null",
-    // "true");
-
+    hibernateProperties.setProperty("teneo.mapping.fetch_containment_eagerly", "true");
+    
     // Without e_version in the tables
     hibernateProperties.setProperty("teneo.mapping.always_version", "false");
 
     // Without e_container in the tables
     hibernateProperties.setProperty("teneo.mapping.disable_econtainer", "true");
-
-    // hibernateProperties.setProperty("teneo.mapping.default_id_feature","");
 
     hibernateProperties.setProperty("hibernate.c3p0.idle_test_period", "1800");
 
@@ -138,25 +105,16 @@ public class ManageArchitectures {
     dataStore = HbHelper.INSTANCE.createRegisterDataStore(dataStoreName);
     dataStore.setDataStoreProperties(hibernateProperties);
 
-    dataStore
-        .setEPackages(new EPackage[] { Architectural_metamodelPackage.eINSTANCE });
+    dataStore.setEPackages(new EPackage[] { Architectural_metamodelPackage.eINSTANCE });
 
-    // try {
     dataStore.initialize();
-    // this.setDataStoreState("INITIALIZED");
-    // log.info("Initializating datastore...");
-    // } finally {
-    // print the hibernate mapping
-    // System.err.println(dataStore.getMappingXML());
-    // log.info("Datastore created");
-    // }
 
     LOGGER.info("[ManageDB] DataStore has been created");
   }
 
   @Lock(LockType.READ)
   public HbDataStore getDataStore() throws Exception {
-    // initializeDataStore();
+ 
     return dataStore;
   }
 
@@ -182,25 +140,19 @@ public class ManageArchitectures {
     }
 
     if (cam != null) {
-
-      // getDataStoreFromManageDB();
-
       SessionFactory sessionFactory = dataStore.getSessionFactory();
 
       // Open a new Session
       Session session = sessionFactory.openSession();
 
       // Check if the CAM ID does exist
-      Query query = session
-          .createQuery("FROM ConcreteArchitecturalModel cam WHERE cam.camID = '"
-              + camID + "'");
+      Query query = session.createQuery("FROM ConcreteArchitecturalModel cam WHERE cam.camID = '"+ camID + "'");
       List<?> ccsList = query.list();
       if (ccsList.size() == 0) {
         result = camID + " ID does not exist --> Insert CAM Specification";
         LOGGER.info(result);
 
-        AbstractArchitecturalModel aam = getAbstractArchitecturalModel(
-            cam.getAamID(), session);
+        AbstractArchitecturalModel aam = getAbstractArchitecturalModel(cam.getAamID(), session);
 
         cam.setAam(aam);
 
@@ -225,15 +177,12 @@ public class ManageArchitectures {
     return result;
   }
 
-  private static AbstractArchitecturalModel getAbstractArchitecturalModel(
-      String aamID, Session session) {
+  private static AbstractArchitecturalModel getAbstractArchitecturalModel(String aamID, Session session) {
 
     AbstractArchitecturalModel aam = null;
 
     LOGGER.info("aam.aamID = " + aamID);
-    Query query = session
-        .createQuery("FROM AbstractArchitecturalModel aam WHERE aam.aamID='"
-            + aamID + "'");
+    Query query = session.createQuery("FROM AbstractArchitecturalModel aam WHERE aam.aamID='"+ aamID + "'");
     List<?> aamList = query.list();
     if (aamList.size() == 1) {
       LOGGER.info("AAM has been found");
@@ -245,8 +194,7 @@ public class ManageArchitectures {
     return aam;
   }
 
-  public String exportAAMFromString(String aamFileType, String aamFileString)
-      throws Exception {
+  public String exportAAMFromString(String aamFileType, String aamFileString) throws Exception {
 
     // It is necessary for the SOAP message, that the input String has
     // <![CDATA["" at the start and
@@ -273,9 +221,7 @@ public class ManageArchitectures {
       Session session = sessionFactory.openSession();
 
       // Check if the CAM ID does exist
-      Query query = session
-          .createQuery("FROM AbstractArchitecturalModel aam WHERE aam.aamID = '"
-              + aamID + "'");
+      Query query = session.createQuery("FROM AbstractArchitecturalModel aam WHERE aam.aamID = '"+ aamID + "'");
       List<?> ccsList = query.list();
       if (ccsList.size() == 0) {
         result = aamID + " ID does not exist --> Insert AAM Specification";
@@ -296,7 +242,6 @@ public class ManageArchitectures {
 
       // Close the session.
       session.close();
-
     }
 
     return result;
@@ -305,16 +250,13 @@ public class ManageArchitectures {
   public String withdrawCAM(String camID) {
 
     String result = "";
-    // getDataStoreFromManageDB();
     SessionFactory sessionFactory = dataStore.getSessionFactory();
 
     // Open a new Session
     Session session = sessionFactory.openSession();
 
     // Check if the CC ID does exist
-    Query query = session
-        .createQuery("FROM ConcreteArchitecturalModel cam WHERE cam.camID = '"
-            + camID + "'");
+    Query query = session.createQuery("FROM ConcreteArchitecturalModel cam WHERE cam.camID = '"+ camID + "'");
     List<?> camsList = query.list();
     if (camsList.size() == 0) {
       result = camID + " ID does not exist --> Cannot delete CAM Specification";
@@ -323,8 +265,7 @@ public class ManageArchitectures {
       result = camID + " ID exist --> Deleting CAM Specification...";
       LOGGER.info(result);
 
-      ConcreteArchitecturalModel cam = (ConcreteArchitecturalModel) camsList
-          .get(0);
+      ConcreteArchitecturalModel cam = (ConcreteArchitecturalModel) camsList.get(0);
 
       // Start transaction
       session.beginTransaction();
@@ -356,28 +297,6 @@ public class ManageArchitectures {
     return resource.getContents().get(0);
   }
 
-  /*
-   * public Session readModel(String camId, ConcreteArchitecturalModel cam){
-   * getDataStoreFromManageDB(); SessionFactory sessionFactory =
-   * dataStore.getSessionFactory();
-   * 
-   * //Open a new Session Session session = sessionFactory.openSession();
-   * 
-   * //Start transaction session.beginTransaction();
-   * 
-   * Query query =
-   * session.createQuery("FROM ConcreteArchitecturalModel WHERE camID = '" +
-   * camId + "'");
-   * 
-   * List<?> cams = query.list();
-   * 
-   * cam = (ConcreteArchitecturalModel) cams.get(0);
-   * 
-   * LOGGER.info("[ManageArchitectures - readModel] - cam: " + cam);
-   * 
-   * return session; }
-   */
-
   public ConcreteArchitecturalModel readModel(String camId) throws Exception {
 
     ConcreteArchitecturalModel cam = null;
@@ -398,9 +317,7 @@ public class ManageArchitectures {
       cam = (ConcreteArchitecturalModel) cams.get(0);
 
       // Initialize CAM
-      // Hibernate.initialize(cam.getConcreteComponent());
       for (ConcreteComponent cc : cam.getConcreteComponent()) {
-    	 // Hibernate.initialize(cc.getInterface());
     	  for(Interface in : cc.getInterface()){
     		  if (in instanceof Provided) {
     	            Hibernate.initialize(((Provided) in).getDTarget());
@@ -411,7 +328,6 @@ public class ManageArchitectures {
     	  Hibernate.initialize(cc.getBSource()); 
     	  Hibernate.initialize(cc.getBTarget()); 
     	  Hibernate.initialize(cc.getRuntimeProperty());
-        // Hibernate.initialize(cc.getPort());
         for (Port p : cc.getPort()) {
           if (p instanceof InputPort) {
             Hibernate.initialize(((InputPort) p).getCTarget());
@@ -420,12 +336,10 @@ public class ManageArchitectures {
           }
         }
       }
-      // Hibernate.initialize(cam.getRelationship());
       for (Relationship r : cam.getRelationship()) {
         if (r instanceof Binary) {
           for (AbstractDependency ad : ((Binary) r).getDependency()) {
             ConcreteDependency cd = ConcreteDependency.class.cast(ad);
-            // Hibernate.initialize(cd.getConnector());
             Hibernate.initialize(cd.getSource());
             Hibernate.initialize(cd.getTarget());
             for (Connector conn : cd.getConnector()) {
@@ -438,9 +352,7 @@ public class ManageArchitectures {
     }
     // Close session
     session.close();
-    // }catch (Exception e){
-    //
-    // }
+
     LOGGER.info("[ManageArchitectures - readModel] - cam: " + cam);
 
     return cam;
@@ -459,18 +371,18 @@ public class ManageArchitectures {
     session.save(cam);
 
     session.getTransaction().commit();
-    // Close session
+
     session.close();
 
     LOGGER.info("[ManageArchitectures - saveModel] - cam: " + cam.getCamID());
 
   }
 
-  public String addComponent(String camID, ConcreteComponent concreteComponent,
-      Port inputPort, List<RuntimeProperty> runtimePropertyList)
-      throws Exception {
+  public void addComponent(String camID, ConcreteComponent concreteComponent,
+		  					 Port inputPort, List<RuntimeProperty> runtimePropertyList) throws Exception {
+	  
     SessionFactory sessionFactory = dataStore.getSessionFactory();
-    String componentAlias = null;
+    //String componentAlias = null;
 
     // Open a new Session
     Session session = sessionFactory.openSession();
@@ -478,9 +390,7 @@ public class ManageArchitectures {
     // Start transaction
     session.beginTransaction();
 
-    Query query = session
-        .createQuery("FROM ConcreteArchitecturalModel WHERE camID = '" + camID
-            + "'");
+    Query query = session.createQuery("FROM ConcreteArchitecturalModel WHERE camID = '" + camID+ "'");
 
     List<?> cams = query.list();
 
@@ -513,12 +423,12 @@ public class ManageArchitectures {
     // Close the session.
     session.close();
 
-    return componentAlias;
+    //return componentAlias;
   }
 
-  public void saveComponentInstance(String componentName,
-      String componentAlias, String componentInstance) throws Exception {
-    SessionFactory sessionFactory = dataStore.getSessionFactory();
+  public void saveComponentInstance(String componentName, String componentAlias, String componentInstance) throws Exception {
+    
+	SessionFactory sessionFactory = dataStore.getSessionFactory();
 
     try {
       // Open a new Session
@@ -527,16 +437,14 @@ public class ManageArchitectures {
       // Start transaction
       session.beginTransaction();
 
-      Query query = session
-          .createQuery("FROM ConcreteComponent WHERE componentname = '"
+      Query query = session.createQuery("FROM ConcreteComponent WHERE componentname = '"
               + componentName + "' AND componentalias= '" + componentAlias
               + "'");
 
       List<?> ccs = query.list();
 
       // Initialize the component
-      ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE
-          .createConcreteComponent();
+      ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE.createConcreteComponent();
       cc = (ConcreteComponent) ccs.get(0);
 
       cc.setComponentInstance(componentInstance);
@@ -554,9 +462,9 @@ public class ManageArchitectures {
     }
   }
 
-  public void changeComponentRuntimeProperties(String componentInstance,
-      RuntimeProperty runtimeProperty) throws Exception {
-    SessionFactory sessionFactory = dataStore.getSessionFactory();
+  public void changeComponentRuntimeProperties(String componentInstance, RuntimeProperty runtimeProperty) throws Exception {
+    
+	SessionFactory sessionFactory = dataStore.getSessionFactory();
 
     // Open a new Session
     Session session = sessionFactory.openSession();
@@ -571,18 +479,13 @@ public class ManageArchitectures {
     List<?> ccs = query.list();
 
     // Initialize the component
-    ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE
-        .createConcreteComponent();
+    ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE.createConcreteComponent();
     cc = (ConcreteComponent) ccs.get(0);
-
-    // cc.setComponentInstance("");
 
     boolean found = false;
     for (int i = 0; i < cc.getRuntimeProperty().size() && found == false; i++) {
-      if (cc.getRuntimeProperty().get(i).getPropertyID()
-          .equalsIgnoreCase(runtimeProperty.getPropertyID())) {
-        cc.getRuntimeProperty().get(i)
-            .setPropertyValue(runtimeProperty.getPropertyValue());
+      if (cc.getRuntimeProperty().get(i).getPropertyID().equalsIgnoreCase(runtimeProperty.getPropertyID())) {
+        cc.getRuntimeProperty().get(i).setPropertyValue(runtimeProperty.getPropertyValue());
         found = true;
         session.save(cc.getRuntimeProperty().get(i));
       }
@@ -597,10 +500,10 @@ public class ManageArchitectures {
     session.close();
   }
 
-  public void changeComponentProperties(String componentInstance,
-      String componentNewInstance, String componentNewName,
-      String componentNewAlias) throws Exception {
-    SessionFactory sessionFactory = dataStore.getSessionFactory();
+  public void changeComponentProperties(String componentInstance, String componentNewInstance,
+		  								String componentNewName, String componentNewAlias) throws Exception {
+    
+	SessionFactory sessionFactory = dataStore.getSessionFactory();
 
     // Open a new Session
     Session session = sessionFactory.openSession();
@@ -608,15 +511,12 @@ public class ManageArchitectures {
     // Start transaction
     session.beginTransaction();
 
-    Query query = session
-        .createQuery("FROM ConcreteComponent WHERE componentinstance = '"
-            + componentInstance + "'");
+    Query query = session.createQuery("FROM ConcreteComponent WHERE componentinstance = '"+ componentInstance + "'");
 
     List<?> ccs = query.list();
 
     // Initialize the component
-    ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE
-        .createConcreteComponent();
+    ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE.createConcreteComponent();
     cc = (ConcreteComponent) ccs.get(0);
 
     cc.setComponentInstance(componentNewInstance);
@@ -633,8 +533,9 @@ public class ManageArchitectures {
   }
 
   public void changeComponentService(String componentInstance,
-      int numberService, List<RuntimeProperty> listServices) throws Exception {
-    SessionFactory sessionFactory = dataStore.getSessionFactory();
+		  							 int numberService, List<RuntimeProperty> listServices) throws Exception {
+    
+	SessionFactory sessionFactory = dataStore.getSessionFactory();
 
     // Open a new Session
     Session session = sessionFactory.openSession();
@@ -642,33 +543,27 @@ public class ManageArchitectures {
     // Start transaction
     session.beginTransaction();
 
-    Query query = session
-        .createQuery("FROM ConcreteComponent WHERE componentinstance = '"
-            + componentInstance + "'");
+    Query query = session.createQuery("FROM ConcreteComponent WHERE componentinstance = '"+ componentInstance + "'");
 
     List<?> ccs = query.list();
 
     // Initialize the component
-    ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE
-        .createConcreteComponent();
+    ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE.createConcreteComponent();
     cc = (ConcreteComponent) ccs.get(0);
 
     // Encontrar numero de servicios
     boolean found = false;
     int nServicios = 0;
     for (int i = 0; i < cc.getRuntimeProperty().size() && found == false; i++) {
-      if (cc.getRuntimeProperty().get(i).getPropertyID()
-          .equalsIgnoreCase("numero_servicios")) {
-        nServicios = Integer.parseInt(cc.getRuntimeProperty().get(i)
-            .getPropertyValue());
+      if (cc.getRuntimeProperty().get(i).getPropertyID().equalsIgnoreCase("numero_servicios")) {
+        nServicios = Integer.parseInt(cc.getRuntimeProperty().get(i).getPropertyValue());
         found = true;
       }
     }
 
     // Borrar todos los servicios
     int nServiciosEncontrados = 0;
-    for (int i = 0; i < cc.getRuntimeProperty().size()
-        && nServicios <= nServiciosEncontrados; i++) {
+    for (int i = 0; i < cc.getRuntimeProperty().size()&& nServicios <= nServiciosEncontrados; i++) {
       String property = cc.getRuntimeProperty().get(i).getPropertyID();
       String service = "";
 
@@ -703,9 +598,9 @@ public class ManageArchitectures {
     changeComponentRuntimeProperties(componentInstance, rp);
   }
 
-  public void deleteComponent(String camID, String componentInstance)
-      throws Exception {
-    // Result is the instance id
+  public void deleteComponent(String camID, String componentInstance)throws Exception {
+    
+	// Result is the instance id
     SessionFactory sessionFactory = dataStore.getSessionFactory();
 
     // Open a new Session
@@ -714,9 +609,7 @@ public class ManageArchitectures {
     // Start transaction
     session.beginTransaction();
 
-    Query query = session
-        .createQuery("FROM ConcreteArchitecturalModel WHERE camID = '" + camID
-            + "'");
+    Query query = session.createQuery("FROM ConcreteArchitecturalModel WHERE camID = '" + camID+ "'");
 
     List<?> cams = query.list();
 
@@ -726,12 +619,9 @@ public class ManageArchitectures {
     // Search the component to be deleted
     boolean found = false;
     for (int i = 0; i < cam.getConcreteComponent().size() && found == false; i++) {
-      LOGGER.info("ITEM(" + i + "): "
-          + cam.getConcreteComponent().get(i).getComponentName());
-      if (cam.getConcreteComponent().get(i).getComponentInstance()
-          .equalsIgnoreCase(componentInstance)) {
-        LOGGER.info("CC NAME to intro: "
-            + cam.getConcreteComponent().get(i).getComponentInstance());
+      LOGGER.info("ITEM(" + i + "): "+ cam.getConcreteComponent().get(i).getComponentName());
+      if (cam.getConcreteComponent().get(i).getComponentInstance().equalsIgnoreCase(componentInstance)) {
+        LOGGER.info("CC NAME to intro: "+ cam.getConcreteComponent().get(i).getComponentInstance());
 
         ConcreteComponent cc = cam.getConcreteComponent().get(i);
 
@@ -745,30 +635,23 @@ public class ManageArchitectures {
           cc.getBSource().remove(0);
 
           for (int k = 0; k < cam.getConcreteComponent().size(); k++) {
-            LOGGER.info("        -----&----- ConcreteComponent: "
-                + cam.getConcreteComponent().get(k).getComponentName());
-            for (int p = 0; p < cam.getConcreteComponent().get(k).getBSource()
-                .size(); p++)
-              if (cam.getConcreteComponent().get(k).getBSource().get(p)
-                  .getRelationshipID().equalsIgnoreCase(idRelationship))
+            LOGGER.info("        -----&----- ConcreteComponent: "+ cam.getConcreteComponent().get(k).getComponentName());
+            for (int p = 0; p < cam.getConcreteComponent().get(k).getBSource().size(); p++)
+              if (cam.getConcreteComponent().get(k).getBSource().get(p).getRelationshipID().equalsIgnoreCase(idRelationship))
                 cam.getConcreteComponent().get(k).getBSource().remove(p);
 
-            for (int p = 0; p < cam.getConcreteComponent().get(k).getBTarget()
-                .size(); p++)
-              if (cam.getConcreteComponent().get(k).getBTarget().get(p)
-                  .getRelationshipID().equalsIgnoreCase(idRelationship))
+            for (int p = 0; p < cam.getConcreteComponent().get(k).getBTarget().size(); p++)
+              if (cam.getConcreteComponent().get(k).getBTarget().get(p).getRelationshipID().equalsIgnoreCase(idRelationship))
                 cam.getConcreteComponent().get(k).getBTarget().remove(p);
           }
 
           for (int z = 0; z < cam.getRelationship().size(); z++) {
-            if (cam.getRelationship().get(z).getRelationshipID()
-                .equalsIgnoreCase(idRelationship)) {
+            if (cam.getRelationship().get(z).getRelationshipID().equalsIgnoreCase(idRelationship)) {
               Binary b = (Binary) cam.getRelationship().get(z);
 
               // Delete nary relationship
               if (((Binary) cam.getRelationship().get(z)).getNaryRelationship() != null) {
-                Nary naryRelationship = ((Binary) cam.getRelationship().get(z))
-                    .getNaryRelationship();
+                Nary naryRelationship = ((Binary) cam.getRelationship().get(z)).getNaryRelationship();
                 cam.getRelationship().remove((Nary) naryRelationship);
               }
 
@@ -781,50 +664,34 @@ public class ManageArchitectures {
         // Delete component target
         LOGGER.info("CC NAME --- SIZE bTARGET: " + cc.getBTarget().size());
         while (cc.getBTarget().size() > 0) {
-          LOGGER.info("        --- POS(" + (0) + ") bTARGET id: "
-              + cc.getBTarget().get(0).getRelationshipID());
+          LOGGER.info("        --- POS(" + (0) + ") bTARGET id: "+ cc.getBTarget().get(0).getRelationshipID());
           String idRelationship = cc.getBTarget().get(0).getRelationshipID();
           cc.getBTarget().remove(0);
 
           for (int k = 0; k < cam.getConcreteComponent().size(); k++) {
 
-            for (int p = 0; p < cam.getConcreteComponent().get(k).getBSource()
-                .size(); p++)
-              if (cam.getConcreteComponent().get(k).getBSource().get(p)
-                  .getRelationshipID().equalsIgnoreCase(idRelationship)) {
+            for (int p = 0; p < cam.getConcreteComponent().get(k).getBSource().size(); p++)
+              if (cam.getConcreteComponent().get(k).getBSource().get(p).getRelationshipID().equalsIgnoreCase(idRelationship)) {
                 // Objective connector
-                ConcreteDependency cd = (ConcreteDependency) cam
-                    .getConcreteComponent().get(k).getBSource().get(p)
-                    .getDependency().get(0);
+                ConcreteDependency cd = (ConcreteDependency) cam.getConcreteComponent().get(k).getBSource().get(p).getDependency().get(0);
                 EList<Connector> connectorList = cd.getConnector();
 
                 // Delete connector
-                for (int q = 0; q < cam.getConcreteComponent().get(k).getPort()
-                    .size(); q++) {
+                for (int q = 0; q < cam.getConcreteComponent().get(k).getPort().size(); q++) {
                   if ((cam.getConcreteComponent().get(k).getPort().get(q)) instanceof OutputPort) {
-                    OutputPort port = (OutputPort) cam.getConcreteComponent()
-                        .get(k).getPort().get(q);
+                    OutputPort port = (OutputPort) cam.getConcreteComponent().get(k).getPort().get(q);
                     for (int d = 0; d < connectorList.size(); d++) {
                       for (int t = 0; t < port.getCSource().size(); t++)
-                        if (connectorList
-                            .get(d)
-                            .getConnectorID()
-                            .equalsIgnoreCase(
-                                port.getCSource().get(t).getConnectorID())) {
+                        if (connectorList.get(d).getConnectorID().equalsIgnoreCase(port.getCSource().get(t).getConnectorID())) {
                           port.getCSource().remove(t);
                         }
                     }
                   } else {
                     if ((cam.getConcreteComponent().get(k).getPort().get(q)) instanceof InputPort) {
-                      InputPort port = (InputPort) cam.getConcreteComponent()
-                          .get(k).getPort().get(q);
+                      InputPort port = (InputPort) cam.getConcreteComponent().get(k).getPort().get(q);
                       for (int d = 0; d < connectorList.size(); d++) {
                         for (int t = 0; t < port.getCTarget().size(); t++)
-                          if (connectorList
-                              .get(d)
-                              .getConnectorID()
-                              .equalsIgnoreCase(
-                                  port.getCTarget().get(t).getConnectorID())) {
+                          if (connectorList.get(d).getConnectorID().equalsIgnoreCase(port.getCTarget().get(t).getConnectorID())) {
                             port.getCTarget().remove(t);
                           }
                       }
@@ -835,43 +702,28 @@ public class ManageArchitectures {
                 cam.getConcreteComponent().get(k).getBSource().remove(p);
               }
 
-            for (int p = 0; p < cam.getConcreteComponent().get(k).getBTarget()
-                .size(); p++)
-              if (cam.getConcreteComponent().get(k).getBTarget().get(p)
-                  .getRelationshipID().equalsIgnoreCase(idRelationship)) {
+            for (int p = 0; p < cam.getConcreteComponent().get(k).getBTarget().size(); p++)
+              if (cam.getConcreteComponent().get(k).getBTarget().get(p).getRelationshipID().equalsIgnoreCase(idRelationship)) {
                 // Objective connector
-                ConcreteDependency cd = (ConcreteDependency) cam
-                    .getConcreteComponent().get(k).getBTarget().get(p)
-                    .getDependency().get(0);
+                ConcreteDependency cd = (ConcreteDependency) cam.getConcreteComponent().get(k).getBTarget().get(p).getDependency().get(0);
                 EList<Connector> connectorList = cd.getConnector();
 
                 // Delete connector
-                for (int q = 0; q < cam.getConcreteComponent().get(k).getPort()
-                    .size(); q++) {
+                for (int q = 0; q < cam.getConcreteComponent().get(k).getPort().size(); q++) {
                   if ((cam.getConcreteComponent().get(k).getPort()) instanceof OutputPort) {
-                    OutputPort port = (OutputPort) cam.getConcreteComponent()
-                        .get(k).getPort().get(q);
+                    OutputPort port = (OutputPort) cam.getConcreteComponent().get(k).getPort().get(q);
                     for (int d = 0; d < connectorList.size(); d++) {
                       for (int t = 0; t < port.getCSource().size(); t++) {
-                        if (connectorList
-                            .get(d)
-                            .getConnectorID()
-                            .equalsIgnoreCase(
-                                port.getCSource().get(t).getConnectorID())) {
+                        if (connectorList.get(d).getConnectorID().equalsIgnoreCase(port.getCSource().get(t).getConnectorID())) {
                           port.getCSource().remove(t);
                         }
                       }
                     }
                   } else {
-                    InputPort port = (InputPort) cam.getConcreteComponent()
-                        .get(k).getPort().get(q);
+                    InputPort port = (InputPort) cam.getConcreteComponent().get(k).getPort().get(q);
                     for (int d = 0; d < connectorList.size(); d++) {
                       for (int t = 0; t < port.getCTarget().size(); t++)
-                        if (connectorList
-                            .get(d)
-                            .getConnectorID()
-                            .equalsIgnoreCase(
-                                port.getCTarget().get(t).getConnectorID())) {
+                        if (connectorList.get(d).getConnectorID().equalsIgnoreCase(port.getCTarget().get(t).getConnectorID())) {
                           port.getCTarget().remove(t);
                         }
                     }
@@ -883,8 +735,7 @@ public class ManageArchitectures {
           }
 
           for (int z = 0; z < cam.getRelationship().size(); z++) {
-            if (cam.getRelationship().get(z).getRelationshipID()
-                .equalsIgnoreCase(idRelationship)) {
+            if (cam.getRelationship().get(z).getRelationshipID().equalsIgnoreCase(idRelationship)) {
               Binary b = (Binary) cam.getRelationship().get(z);
               cam.getRelationship().remove(b);
               z = 0;
@@ -893,9 +744,7 @@ public class ManageArchitectures {
 
         }
 
-        // session.save(cc);
-        LOGGER.info("COMPONENT TO DELETE: "
-            + cam.getConcreteComponent().get(i).getComponentName());
+        LOGGER.info("COMPONENT TO DELETE: "+ cam.getConcreteComponent().get(i).getComponentName());
         cam.getConcreteComponent().remove(i);
 
         session.save(cam);

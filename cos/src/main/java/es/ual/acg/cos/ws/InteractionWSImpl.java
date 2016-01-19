@@ -7,15 +7,11 @@ import java.util.List;
 import javax.jws.WebService;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.xml.bind.annotation.XmlElement;
 
 import org.jboss.logging.Logger;
 
 import es.ual.acg.cos.modules.IMM;
-import es.ual.acg.cos.types.ComponentData;
 import es.ual.acg.cos.types.InterModulesData;
-import es.ual.acg.cos.types.UserInteractionData;
 import es.ual.acg.cos.ws.types.RegisterInteractionParams;
 import es.ual.acg.cos.ws.types.RegisterInteractionResult;
 

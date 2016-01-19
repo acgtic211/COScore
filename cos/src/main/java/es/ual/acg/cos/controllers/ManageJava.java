@@ -35,5 +35,31 @@ public class ManageJava {
 	  
 	  return o;
 	}
+	
+	/*private String makeInstanceId(String userId, String componentId, String componentName){
+	String platform = queryComponentPlatform(componentId);
+	String instanceId = null;
+	try{
+		if(platform.equalsIgnoreCase("Web")){
+			ManageWookie wookie = new ManageWookie();
 
+			WidgetData widgetData = wookie.getOrCreateWidgetInstance(userId, componentId, componentName);
+			
+			instanceId = widgetData.getIdentifier();
+			
+		}else{
+			if(platform.equalsIgnoreCase("Java")){
+				ManageJava manageJava = new ManageJava();
+
+				JavaComponentResponse r = manageJava.getOrCreateJavaInstance(userId, componentId, componentName);
+
+				instanceId = r.getComponentInstanceName();
+			}
+			
+		}
+	} catch (Exception e) {
+		LOGGER.error(e);
+	}
+	return instanceId;
+	}*/
 }

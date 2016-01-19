@@ -42,16 +42,6 @@ public class ManageUsers {
 		}
 	}
 
-	/**
-	 * Query users from Data Base coscoreuser
-	 * 
-	 * @param userName
-	 * @param userPassword
-	 * @return boolean
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-
 	public int queryUser(String userName, String userPassword) throws ClassNotFoundException, SQLException {
 		int id_resultado;
 		ResultSet rs;
@@ -77,8 +67,7 @@ public class ManageUsers {
 			ResultSet rs;
 			Statement s = (Statement) conn.createStatement();
 
-			rs = s.executeQuery("Select camid From coscoreuser Where user_id = '"
-					+ userId + "'");
+			rs = s.executeQuery("Select camid From coscoreuser Where user_id = '"+ userId + "'");
 			if (rs.next()) {
 				id_resultado = rs.getString(1);
 			} 
@@ -94,8 +83,7 @@ public class ManageUsers {
 		ResultSet rs;
 		Statement s = (Statement) conn.createStatement();
 
-		rs = s.executeQuery("Select camid From coscoreprofile Where profile_name = '"
-				+ Profilename + "'");
+		rs = s.executeQuery("Select camid From coscoreprofile Where profile_name = '"+ Profilename + "'");
 		if (rs.next()) {
 			camid_resultado = rs.getString(1);
 		} 
@@ -146,43 +134,6 @@ public class ManageUsers {
 		return response;
 	}
 
-	/**
-	 * Create an user
-	 * 
-	 * @param userName
-	 * @param userPassword
-	 * @param userProfile
-	 * @return
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
-	 */
-	/*public boolean createUser(String userName, String userPassword, String userProfile) {
-		try {
-			initialize();
-			Statement s = (Statement) conn.createStatement();
-			int x = s
-					.executeUpdate("Insert Into coscoreuser (user_name, user_password, user_profile) Values ('"
-							+ userName
-							+ "', '"
-							+ userPassword
-							+ "', '"
-							+ userProfile + "')");
-
-			s.close();
-			conn.close();
-			if (x == 0)
-				return false;
-		} catch (SQLException ex) {
-			LOGGER.error(ex);
-		} catch (InstantiationException e) {
-			LOGGER.error(e);
-		} catch (IllegalAccessException e) {
-			LOGGER.error(e);
-		}
-		return true;
-	}*/
-	
-
 	public void createUser(String userName, String userPassword, String userProfile, String camid) throws ClassNotFoundException, SQLException {
 		initialize();
 		Statement s = (Statement) conn.createStatement();
@@ -199,14 +150,6 @@ public class ManageUsers {
 		conn.close();
 	}
 
-	/**
-	 * Update an user from coscoreuser
-	 * 
-	 * @param userName
-	 * @param userPassword
-	 * @param userProfile
-	 * @return
-	 */
 	public boolean updateUser(String userId, String userNameNew,
 			String userPassword, String userProfile) throws Exception, SQLException {
 			

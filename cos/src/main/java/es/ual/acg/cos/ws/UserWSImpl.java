@@ -1,13 +1,9 @@
 package es.ual.acg.cos.ws;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.xml.bind.annotation.XmlElement;
 
 import org.jboss.logging.Logger;
 
@@ -123,7 +119,6 @@ public class UserWSImpl implements UserWS{
 			  			LOGGER.error(e);
 			  			deleteUserResult.setDeleted(false);
 			  			deleteUserResult.setMessage("> Internal Server Error");
-			  			
 			  		}
 				} else {
 		  			deleteUserResult.setDeleted(false);

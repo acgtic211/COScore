@@ -39,11 +39,7 @@ public class UserEJBs {
 				dmms = new ArrayList<DMM>();
 				dmm = (DMM)initialContext.lookup("java:module/DMM");
 				imm = (IMM)initialContext.lookup("java:module/IMM");
-				//lrmm.initialize(userID);
-				//dmm.setCAM(lrmm.getCAM());
-				//dmm.initializeOrUpdate();
 				dmms.add(dmm);
-				//tmm.setCAM(dmm.getCAM());
 			} catch (NamingException e) {
 				LOGGER.error(e.getMessage());
 			} 

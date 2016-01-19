@@ -40,12 +40,6 @@ public class SessionControl extends Thread {
 		
 		userEJBMap.remove(user);
 		userTime.remove(user);
-		
-//		LOGGER.info("Delete thread: " + this.getId());
-//		
-//		this.stop();
-//		Quizas sea así
-//		this.finalize();
 	}
 
 	private void waitSeconds(int segundos) {

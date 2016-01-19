@@ -12,9 +12,6 @@ import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -24,8 +21,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
-import org.eclipse.emf.ecore.xmi.util.XMLProcessor;
 import org.eclipse.emf.teneo.PersistenceOptions;
 import org.eclipse.emf.teneo.hibernate.HbDataStore;
 import org.eclipse.emf.teneo.hibernate.HbHelper;
@@ -40,7 +35,6 @@ import acmm.AbstractComponentSpecification;
 import acmm.AcmmPackage;
 import architectural_metamodel.Architectural_metamodelFactory;
 import architectural_metamodel.RuntimeProperty;
-import architectural_metamodel.impl.RuntimePropertyImpl;
 import ccmm.impl.PackagingImpl;
 import ccmm.CcmmPackage;
 import ccmm.ConcreteComponentSpecification;
@@ -72,7 +66,6 @@ import ccmm.impl.ExtraFunctionalImpl;
 import ccmm.impl.FunctionalImpl;
 import ccmm.impl.ImplementationImpl;
 import ccmm.impl.InputImpl;
-import ccmm.impl.InterfaceImpl;
 import ccmm.impl.LocationImpl;
 import ccmm.impl.MarketingImpl;
 import ccmm.impl.OperationImpl;
@@ -104,91 +97,76 @@ public class ManageRegister
 		  this.initializeDataStoreAC();		
 	}
 	//There aren't error to return
-		private void initializeDataStoreAC() {
+	private void initializeDataStoreAC() {
 			
-			LOGGER.info("[ManageDB - initializeDataStoreAC] Creating DataStoreAC...");
-			
-			Properties hibernateProperties = new Properties();
-
-			String dbName = "abstractcomponents";
-			
-			hibernateProperties.setProperty(Environment.DRIVER, "org.postgresql.Driver");
-			hibernateProperties.setProperty(Environment.USER, "postgres");
-			hibernateProperties.setProperty(Environment.URL, "jdbc:postgresql://150.214.150.116:5432/" + dbName);
-			hibernateProperties.setProperty(Environment.PASS, "root");
-			hibernateProperties.setProperty(Environment.DIALECT, org.hibernate.dialect.PostgreSQL81Dialect.class.getName());
-
-			hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT, "REFRESH,PERSIST,MERGE");
-			hibernateProperties.setProperty(PersistenceOptions.INHERITANCE_MAPPING, "JOINED");		
-			
-			hibernateProperties.setProperty("hibernate.c3p0.idle_test_period", "1800" );
-
-			final String dataStoreName = "AbstractComponents";
-			dataStoreAC = HbHelper.INSTANCE.createRegisterDataStore(dataStoreName);
-			dataStoreAC.setDataStoreProperties(hibernateProperties);
-
-			dataStoreAC.setEPackages(new EPackage[] { AcmmPackage.eINSTANCE });
-
-			dataStoreAC.initialize();
-			
-			LOGGER.info("[ManageDB] DataStoreAC has been created");
-		}
+		LOGGER.info("[ManageDB - initializeDataStoreAC] Creating DataStoreAC...");
 		
-		//There aren't error to return
-		private void initializeDataStoreCC() {
-			
-			LOGGER.info("[ManageDB - initializeDataStoreAC] Creating DataStoreCC...");
-			
-			Properties hibernateProperties = new Properties();
+		Properties hibernateProperties = new Properties();
 
-			String dbName = "concretecomponentsjesus33";
-			
-			hibernateProperties.setProperty(Environment.DRIVER, "org.postgresql.Driver");
-			hibernateProperties.setProperty(Environment.USER, "postgres");
-			hibernateProperties.setProperty(Environment.URL, "jdbc:postgresql://150.214.150.116:5432/" + dbName);
-			hibernateProperties.setProperty(Environment.PASS, "root");
-			hibernateProperties.setProperty(Environment.DIALECT, org.hibernate.dialect.PostgreSQL81Dialect.class.getName());
-
-			hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT, "REFRESH,PERSIST,MERGE");
-			hibernateProperties.setProperty(PersistenceOptions.INHERITANCE_MAPPING, "JOINED");
-			
-			// No crear tablas intermedias
-			hibernateProperties.setProperty(PersistenceOptions.JOIN_TABLE_FOR_NON_CONTAINED_ASSOCIATIONS,"false");
-			
-			// Without e_version in the tables
-		    hibernateProperties.setProperty("teneo.mapping.always_version","false");
-		    
-		    // Without e_container in the tables
-		    hibernateProperties.setProperty("teneo.mapping.disable_econtainer","true");
-		    
-		    hibernateProperties.setProperty("hibernate.c3p0.idle_test_period", "1800" );
-
-			final String dataStoreName = "ConcreteComponents";
-			dataStoreCC = HbHelper.INSTANCE.createRegisterDataStore(dataStoreName);
-			dataStoreCC.setDataStoreProperties(hibernateProperties);
-
-			dataStoreCC.setEPackages(new EPackage[] { CcmmPackage.eINSTANCE });
-
-			dataStoreCC.initialize();
-			
-			LOGGER.info("[ManageDB] DataStoreCC has been created");
-		}
-	private String convertToXml(EObject eObject){
+		String dbName = "abstractcomponents";
 		
-        String result = "";
-		XMLResourceImpl resource = new XMLResourceImpl();
-        XMLProcessor processor = new XMLProcessor();
-        resource.setEncoding("UTF-8");
-        resource.getContents().add(eObject);
-        try {
-			result = processor.saveToString(resource, null);
-		}
-        catch (IOException e) {
-			LOGGER.error("IOException: " + e.getMessage());
-		}
-		return result;
-    }
+		hibernateProperties.setProperty(Environment.DRIVER, "org.postgresql.Driver");
+		hibernateProperties.setProperty(Environment.USER, "postgres");
+		hibernateProperties.setProperty(Environment.URL, "jdbc:postgresql://150.214.150.116:5432/" + dbName);
+		hibernateProperties.setProperty(Environment.PASS, "root");
+		hibernateProperties.setProperty(Environment.DIALECT, org.hibernate.dialect.PostgreSQL81Dialect.class.getName());
 
+		hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT, "REFRESH,PERSIST,MERGE");
+		hibernateProperties.setProperty(PersistenceOptions.INHERITANCE_MAPPING, "JOINED");		
+		
+		hibernateProperties.setProperty("hibernate.c3p0.idle_test_period", "1800" );
+
+		final String dataStoreName = "AbstractComponents";
+		dataStoreAC = HbHelper.INSTANCE.createRegisterDataStore(dataStoreName);
+		dataStoreAC.setDataStoreProperties(hibernateProperties);
+
+		dataStoreAC.setEPackages(new EPackage[] { AcmmPackage.eINSTANCE });
+
+		dataStoreAC.initialize();
+		
+		LOGGER.info("[ManageDB] DataStoreAC has been created");
+	}
+	
+	//There aren't error to return
+	private void initializeDataStoreCC() {
+		
+		LOGGER.info("[ManageDB - initializeDataStoreAC] Creating DataStoreCC...");
+		
+		Properties hibernateProperties = new Properties();
+
+		String dbName = "concretecomponentsjesus33";
+		
+		hibernateProperties.setProperty(Environment.DRIVER, "org.postgresql.Driver");
+		hibernateProperties.setProperty(Environment.USER, "postgres");
+		hibernateProperties.setProperty(Environment.URL, "jdbc:postgresql://150.214.150.116:5432/" + dbName);
+		hibernateProperties.setProperty(Environment.PASS, "root");
+		hibernateProperties.setProperty(Environment.DIALECT, org.hibernate.dialect.PostgreSQL81Dialect.class.getName());
+
+		hibernateProperties.setProperty(PersistenceOptions.CASCADE_POLICY_ON_NON_CONTAINMENT, "REFRESH,PERSIST,MERGE");
+		hibernateProperties.setProperty(PersistenceOptions.INHERITANCE_MAPPING, "JOINED");
+		
+		// No crear tablas intermedias
+		hibernateProperties.setProperty(PersistenceOptions.JOIN_TABLE_FOR_NON_CONTAINED_ASSOCIATIONS,"false");
+		
+		// Without e_version in the tables
+	    hibernateProperties.setProperty("teneo.mapping.always_version","false");
+	    
+	    // Without e_container in the tables
+	    hibernateProperties.setProperty("teneo.mapping.disable_econtainer","true");
+	    
+	    hibernateProperties.setProperty("hibernate.c3p0.idle_test_period", "1800" );
+
+		final String dataStoreName = "ConcreteComponents";
+		dataStoreCC = HbHelper.INSTANCE.createRegisterDataStore(dataStoreName);
+		dataStoreCC.setDataStoreProperties(hibernateProperties);
+
+		dataStoreCC.setEPackages(new EPackage[] { CcmmPackage.eINSTANCE });
+
+		dataStoreCC.initialize();
+		
+		LOGGER.info("[ManageDB] DataStoreCC has been created");
+	}
+	
 	public String exportCCFromURI(String ccFileType, String ccFileURI)
 	{
 		String result = "";
@@ -197,22 +175,15 @@ public class ManageRegister
 		String componentName = cc.getComponentName();
 		LOGGER.info("Read CC ID: " + componentName);
 		
-//public HbDataStore getDataStoreCC() {
-
-	
-		//getDataStoreCCFromManageDB();
-		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
 		//Open a new Session
 		Session session = sessionFactory.openSession();
 		
 		//Check if the CC ID does exist
-		Query query  = session.createQuery("FROM ConcreteComponentSpecification ccs WHERE ccs.componentName = '" +
-				componentName + "'");
+		Query query  = session.createQuery("FROM ConcreteComponentSpecification ccs WHERE ccs.componentName = '" +componentName + "'");
 		List<?> ccsList = query.list();
-		if(ccsList.size()==0)
-		{
+		if(ccsList.size()==0){
 			result = componentName + " ID does not exist --> Insert CC Specification";
 			LOGGER.info(result);
 
@@ -224,16 +195,13 @@ public class ManageRegister
 			//Commit the changes to the database.
 			session.getTransaction().commit();
 			
-		}
-		else
-		{
+		}else{
 			result = componentName + " ID exist --> CC Specification is not inserted";
 			LOGGER.info(result);
 		}
 		
 		//Close the session.
 		session.close();
-		
 	    
 		return result;
 	}
@@ -246,9 +214,6 @@ public class ManageRegister
 		
 		String result = "";
 		
-		//log.info("ccFileString: " + ccFileString);
-		//log.info("exportFromString!!!!!");
-		
 		ConcreteComponentSpecification cc = null;
 		String componentName = null;
 		try {
@@ -259,21 +224,16 @@ public class ManageRegister
 			LOGGER.error(e.toString());
 		}
 		
-		if(cc != null)
-		{
-			//getDataStoreCCFromManageDB();
-			
+		if(cc != null){
 			SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
 			//Open a new Session
 			Session session = sessionFactory.openSession();
 			
 			//Check if the CC ID does exist
-			Query query  = session.createQuery("FROM ConcreteComponentSpecification ccs WHERE ccs.componentName = '" +
-					componentName + "'");
+			Query query  = session.createQuery("FROM ConcreteComponentSpecification ccs WHERE ccs.componentName = '" +componentName + "'");
 			List<?> ccsList = query.list();
-			if(ccsList.size()==0)
-			{
+			if(ccsList.size()==0){
 				result = componentName + " ID does not exist --> Insert CC Specification";
 				LOGGER.info(result);
 
@@ -285,9 +245,7 @@ public class ManageRegister
 				//Commit the changes to the database.
 				session.getTransaction().commit();
 				
-			}
-			else
-			{
+			}else{
 				result = componentName + " ID exist --> CC Specification is not inserted";
 				LOGGER.info(result);
 			}
@@ -305,8 +263,6 @@ public class ManageRegister
 			String versionId, String versionDate, String programmingLanguage, String platformType, String repositoryId, String repositoryType,
 			String repositoryURI, String componentURI, String[] propertyId, String[] propertyValue, boolean[] isEditable,
 			String dependencyInterfaceId, String[] requiredProvided, String[] interfaceId,	String[] interfaceDescription, String[] anyUri)	{
-		
-		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -527,8 +483,7 @@ public class ManageRegister
 		//Check if the CC ID does exist
 		Query query  = session.createQuery("FROM ConcreteComponentSpecification ccs WHERE ccs.componentName = '" + componentName + "'");
 		List<?> ccsList = query.list();
-		if(ccsList.size()==0)
-		{
+		if(ccsList.size()==0){
 			result = componentName + " ID does not exist --> Insert CC Specification";
 			LOGGER.info(result);
 
@@ -540,9 +495,7 @@ public class ManageRegister
 			//Commit the changes to the database.
 			session.getTransaction().commit();
 				
-		}
-		else
-		{
+		}else{
 			result = componentName + " ID exist --> CC Specification is not inserted";
 			LOGGER.info(result);
 		}
@@ -550,13 +503,10 @@ public class ManageRegister
 		//Close the session.
 		session.close();
 					
-		
 		return result;
 	}
 	
 	private Contact queryContact(String personName){
-		
-		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -566,8 +516,7 @@ public class ManageRegister
 		//Check if the CC ID does exist
 		Query query  = session.createQuery("FROM Contact c WHERE c.personName = '" + personName + "'");
 		List<?> cList = query.list();
-		if(cList.size()==0)
-		{
+		if(cList.size()==0)		{
 			//Close the session.
 			session.close();
 
@@ -583,8 +532,6 @@ public class ManageRegister
 	}
 	
     private Marketing queryMarketing(String entityId){
-		
-		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -611,8 +558,6 @@ public class ManageRegister
     
     private Implementation queryImplementation(String programmingLanguage){
 		
-		//getDataStoreCCFromManageDB();
-		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
 		//Open a new Session
@@ -637,8 +582,6 @@ public class ManageRegister
 	}
     
     private Location queryLocation(String repositoryID){
-		
-		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -677,9 +620,7 @@ public class ManageRegister
 			LOGGER.error(e.toString());
 		}
 		
-		if(acs != null)
-		{
-			//getDataStoreACFromManageDB();
+		if(acs != null){
 			
 			SessionFactory sessionFactory = dataStoreAC.getSessionFactory();
 
@@ -690,8 +631,7 @@ public class ManageRegister
 			Query query  = session.createQuery("FROM AbstractComponentSpecification acs " +
 					"WHERE acs.componentID = '" + componentID + "'");
 			List<?> acsList = query.list();
-			if(acsList.size()==0)
-			{
+			if(acsList.size()==0){
 				result = componentID + " ID does not exist --> Insert AC Specification";
 				LOGGER.info(result);
 
@@ -703,9 +643,7 @@ public class ManageRegister
 				//Commit the changes to the database.
 				session.getTransaction().commit();
 				
-			}
-			else
-			{
+			}else{
 				result = componentID + " ID exist --> AC Specification is not inserted";
 				LOGGER.info(result);
 			}
@@ -740,27 +678,6 @@ public class ManageRegister
 	    return cc;
 	}
 	
-//	private void getDataStoreCCFromManageDB()
-//	{
-//		dataStoreCC = null;
-//		
-//		ManageDB managdb = null;
-//		Context initialContext;
-//		try
-//		{
-//			initialContext = new InitialContext();
-//			
-//			managdb = (ManageDB)initialContext.lookup("java:module/ManageDB");
-//			dataStoreCC = managdb.getDataStoreCC();
-//		}
-//		catch (NamingException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		if(dataStoreCC == null)
-//			LOGGER.info("[Register] Error getting the DataStoreCC");
-//		
-//	}
 	@Lock(LockType.READ)
 	public HbDataStore getDataStoreCC() {
 		return dataStoreCC;
@@ -769,28 +686,7 @@ public class ManageRegister
 	public void setDataStoreCC(HbDataStore dataStoreCC) {
 		this.dataStoreCC = dataStoreCC;
 	}
-	
-//	private void getDataStoreACFromManageDB()
-//	{
-//		dataStoreAC = null;
-//		
-//		ManageDB managdb = null;
-//		Context initialContext;
-//		try
-//		{
-//			initialContext = new InitialContext();
-//			
-//			managdb = (ManageDB)initialContext.lookup("java:module/ManageDB");
-//			dataStoreAC = managdb.getDataStoreAC();
-//		}
-//		catch (NamingException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		if(dataStoreAC == null)
-//			LOGGER.info("[Register] Error getting the DataStoreAC");
-//		
-//	}
+
 	@Lock(LockType.READ)
 	public HbDataStore getDataStoreAC() {
 		//initializeDataStoreAC();
@@ -800,6 +696,7 @@ public class ManageRegister
 	public void setDataStoreAC(HbDataStore dataStoreAC) {
 		this.dataStoreAC = dataStoreAC;
 	}
+	
 	public EObject convertXMIStringToEObject(String xmiString) throws IOException {
         XMIResourceImpl resource = new XMIResourceImpl();
         resource.setEncoding("UTF-8");
@@ -811,8 +708,6 @@ public class ManageRegister
 	public String withdrawCC(String componentName)
 	{
 		String result = "";
-		
-		//getDataStoreCCFromManageDB();
 		
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
@@ -857,24 +752,18 @@ public class ManageRegister
 	{
 		String result = "";
 		
-		//getDataStoreACFromManageDB();
-		
 		SessionFactory sessionFactory = dataStoreAC.getSessionFactory();
 
 		//Open a new Session
 		Session session = sessionFactory.openSession();
 		
 		//Check if the CC ID does exist
-		Query query  = session.createQuery("FROM AbstractComponentSpecification acs WHERE acs.componentID = '" +
-				acID + "'");
+		Query query  = session.createQuery("FROM AbstractComponentSpecification acs WHERE acs.componentID = '" +acID + "'");
 		List<?> acsList = query.list();
-		if(acsList.size()==0)
-		{
+		if(acsList.size()==0){
 			result = acID + " ID does not exist --> Cannot delete AC Specification";
 			LOGGER.info(result);			
-		}
-		else
-		{
+		}else{
 			result = acID + " ID exist --> Deleting CC Specification...";
 			LOGGER.info(result);
 			
@@ -898,7 +787,7 @@ public class ManageRegister
 	}
 	
 	public String queryComponentPlatform(String componentName) throws Exception{
-		//getDataStoreCCFromManageDB();
+
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
 		//Open a new Session
@@ -912,15 +801,13 @@ public class ManageRegister
 		
 		List<?> ccs = query.list();
 
-		LOGGER.info("PlataformType -> " + ((ConcreteComponentSpecification) ccs.get(0)).getPackaging().
-																getImplementation().getPlatformType());
+		LOGGER.info("PlataformType -> " + ((ConcreteComponentSpecification) ccs.get(0)).getPackaging().getImplementation().getPlatformType());
 				  
 		//Close the session.
 		session.close();
 		
 		if(ccs.size() == 1)
-			return ((ConcreteComponentSpecification) ccs.get(0)).getPackaging().getImplementation().
-																			getPlatformType().toString();
+			return ((ConcreteComponentSpecification) ccs.get(0)).getPackaging().getImplementation().getPlatformType().toString();
 		else
 			return null;
 	}
@@ -1056,7 +943,7 @@ public class ManageRegister
 	}
 	
 	public List<RuntimeProperty> readComponentProperty(String componentName)throws Exception{
-		//getDataStoreCCFromManageDB();
+
 		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
 
 		//Open a new Session
@@ -1065,8 +952,7 @@ public class ManageRegister
 		//Start transaction
 		session.beginTransaction();
 				
-		Query query = session.createQuery("FROM ConcreteComponentSpecification "
-				+ "WHERE componentName = '" + componentName + "'");
+		Query query = session.createQuery("FROM ConcreteComponentSpecification "+ "WHERE componentName = '" + componentName + "'");
 		
 		List<?> ccs = query.list();
 

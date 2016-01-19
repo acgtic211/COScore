@@ -12,7 +12,6 @@ import es.ual.acg.cos.types.ComponentData;
 import es.ual.acg.cos.types.UserInteractionData;
 
 @XmlType(propOrder = {"userId","newSession","interaction","operationPerformed","componentId","groupComponent","ungroupComponent","cotsget"})
-//@XmlType(propOrder = {"userId","actionDone","newsComponentData"})
 @XmlAccessorType(XmlAccessType.NONE)
 public class RegisterInteractionParams {
 	@XmlElement(required=true) 

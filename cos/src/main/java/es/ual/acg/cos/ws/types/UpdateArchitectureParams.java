@@ -11,7 +11,6 @@ import es.ual.acg.cos.types.ComponentData;
 import es.ual.acg.cos.types.UserInteractionData;
 
 @XmlType(propOrder = {"userId","componentInstance","actionDone","newsComponentData","interaction"})
-//@XmlType(propOrder = {"userId","actionDone","newsComponentData"})
 @XmlAccessorType(XmlAccessType.NONE)
 public class UpdateArchitectureParams {
 	@XmlElement(required=true) 
@@ -31,7 +30,6 @@ public class UpdateArchitectureParams {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-
 	public String getComponentInstance() {
 		return componentInstance;
 	}

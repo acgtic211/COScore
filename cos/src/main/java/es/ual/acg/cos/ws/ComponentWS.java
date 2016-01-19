@@ -12,11 +12,6 @@ import es.ual.acg.cos.ws.types.UpdateArchitectureResult;
 @WebService(name="ComponentWS")
 public interface ComponentWS {
 	
-//	@WebMethod(operationName="deleteComponent", action="deleteComponent")
-//	@WebResult(name="result", targetNamespace="http://ws.cos.acg.ual.es/") @XmlElement(required=true)
-//	public DeleteComponentResult deleteComponent(
-//			@WebParam(name="params", targetNamespace="http://ws.cos.acg.ual.es/") @XmlElement(required=true) DeleteComponentParams params);
-
 	@WebMethod(operationName="updateArchitecture", action="updateArchitecture")
 	@WebResult(name="result", targetNamespace="http://ws.cos.acg.ual.es/") @XmlElement(required=true)
 	public UpdateArchitectureResult updateArchitecture(

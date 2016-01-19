@@ -26,7 +26,4 @@ public class UpdateUserResult {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
-	
-
 }

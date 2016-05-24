@@ -1,3 +1,35 @@
+/*
+ * IMM.java -- Módulo de Gestión de Interacción.
+ * Copyright (C) 2016  Alfredo Valero Rodríguez and Javier Criado Rodríguez
+ *
+ * IMM.java is part of COScore Community.
+ * 
+ * COScore Community is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/gpl.html> or
+ * see  <https://github.com/acgtic211/COScore-Community>.  Or write to
+ * the Free Software Foundation, I51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1335, USA.
+ *
+ *  Authors: Alfredo Valero Rodríguez  Software Developer 
+ *           Javier Criado Rodríguez   Doctor/Researcher/Software Developer
+ *    Group: ACG 		               Applied Computing Group
+ * Internet: http://acg.ual.es/        
+ *   E-mail: acg.tic211@ual.es        
+ *   Adress: Edif. Científico Técnico, CITE-III
+ *           Universidad de Almería
+ *           Almeria, España
+ *           04120
+*/
 package es.ual.acg.cos.modules;
 
 import java.sql.Connection;
@@ -42,11 +74,6 @@ import architectural_metamodel.RuntimeProperty;
 public class IMM {
 	private static final Logger LOGGER = Logger.getLogger(IMM.class);
 	
-	// Variable to connect with DB
-	//Connection conn = null;
-	
-//	private ConcreteArchitecturalModel cam;
-
 	public InterModulesData registerinteraction(String newSession, String deviceType, String interactionType, String dateTime, String userId,
 			String latitude, String longitude, String operationPerformed, String componentId, List<String> groupComponent, List<String> ungroupComponent, 
 			List<ComponentData> cotsget){
@@ -72,284 +99,4 @@ public class IMM {
 		}
 		return result;
 	}
-	// @PostConstruct
-//	public void initialize(){
-//		// Establecimiento de conexión con la base de datos
-//		String url = "jdbc:postgresql://150.214.150.116:5432/interaction";
-//		String login = "postgres";
-//		String password = "root";
-//		conn = null;
-//		try {
-//			Class.forName("org.postgresql.Driver");
-//			conn = (Connection) DriverManager.getConnection(url, login,
-//					password);
-//			if (conn != null) {
-//			}
-//		} catch (SQLException ex) {
-//			System.out.println("La conexión ha sido nula");
-//			System.out.println(ex);
-//		} catch (ClassNotFoundException ex) {
-//			System.out.println("La conexión ha sido nula");
-//			System.out.println(ex);
-//		} catch (Exception e){
-//			
-//		}
-//		
-//		if(dataStore == null)		 
-//		{
-//			LOGGER.info("[IMM] Getting DataStore...");
-//			this.getDataStoreFromManageDB();
-//			LOGGER.info("[IMM] DataStore has been got");
-//		}
-//		else
-//			LOGGER.info("[IMM] DataStore is already got");
-//		
-//		if(dataStoreCC == null)		 
-//		{
-//			LOGGER.info("[IMM] Getting DataStoreCC...");
-//			this.getDataStoreCCFromManageDB();
-//			LOGGER.info("[IMM] DataStoreCC has been got");
-//		}
-//		else
-//			LOGGER.info("[IMM] DataStoreCC is already got");
-//	}
-//
-//	/**
-//	 * Create an user
-//	 * 
-//	 * @param userName
-//	 * @param userPassword
-//	 * @param userProfile
-//	 * @return
-//	 */
-//	public boolean insertInteraction(String modelId, String componentId,
-//			String userId, String interactionMoment, String action,
-//			String property, String value) {
-//		try {
-//			initialize();
-//			Statement s = (Statement) conn.createStatement();
-//			int x = s
-//					.executeUpdate("Insert Into userinteraction (model_id, component_id, user_id, interaction_moment, action, property, value) Values ('"
-//							+ modelId
-//							+ "', '"
-//							+ componentId
-//							+ "', '"
-//							+ userId
-//							+ "', '"
-//							+ interactionMoment
-//							+ "', '"
-//							+ action
-//							+ "', '" + property + "', '" + value + "')");
-//
-//			s.close();
-//			conn.close();
-//			if (x == 0)
-//				return false;
-//		} catch (SQLException ex) {
-//			ex.printStackTrace();
-//		}
-//		return true;
-//	}
-//	
-//	private String makeInstanceId(String userId, String componentId, String componentName){
-//		String platform = queryComponentPlatform(componentId);
-//		String instanceId = null;
-//		try{
-//			if(platform.equalsIgnoreCase("Web")){
-//				ManageWookie wookie = new ManageWookie();
-//	
-//				WidgetData widgetData = wookie.getOrCreateWidgetInstance(userId, componentId, componentName);
-//				
-//				instanceId = widgetData.getIdentifier();
-//				
-//			}else{
-//				if(platform.equalsIgnoreCase("Java")){
-//					ManageJava manageJava = new ManageJava();
-//	
-//					JavaComponentResponse r = manageJava.getOrCreateJavaInstance(userId, componentId, componentName);
-//	
-//					instanceId = r.getComponentInstanceName();
-//				}
-//				
-//			}
-//		} catch (Exception e) {
-//			LOGGER.error(e);
-//		}
-//		return instanceId;
-//	}
-//	
-	
-	/*@Lock(LockType.READ)
-	public void loadInteraction7(String modelId, String userId, String componentId, 
-			String componentName, String action, String position, String value) {
-		
-		try {
-			InitialContext initialContext = new InitialContext();
-		    ManageInteraction mi = (es.ual.acg.cos.controllers.ManageInteraction)initialContext.lookup("java:app/cos/ManageInteraction");
-	
-		    mi.loadInteraction7(modelId, userId, componentId, componentName, action, position, value);
-			    
-		} catch (Exception e) {
-			LOGGER.error(e);
-
-		} 
-		
-	}*/
-
-
-	/*@Lock(LockType.READ)
-	public void loadInteraction6(String modelId, String componentId,
-			String userId, String action, String position, String value) {
-
-		try {
-			InitialContext initialContext = new InitialContext();
-		    ManageInteraction mi = (es.ual.acg.cos.controllers.ManageInteraction)initialContext.lookup("java:app/cos/ManageInteraction");
-	
-		    mi.loadInteraction6(modelId,  componentId, userId, action, position, value);
-			    
-		} catch (Exception e) {
-			LOGGER.error(e);
-
-		} 
-	}
-	*/
-//	
-//	@Lock(LockType.READ)
-//	public void manageRuntimeProperty(String componentId, String property, String value){
-//		SessionFactory sessionFactory = dataStore.getSessionFactory();
-//
-//		//Open a new Session
-//		Session session = sessionFactory.openSession();
-//		  
-//		//Start transaction
-//		session.beginTransaction();
-//		
-//		Query query = session.createQuery("FROM ConcreteArchitecturalModel WHERE camID = '" + cam.getCamID() + "'");
-//
-//		List<?> cams = query.list();
-//
-//		cam = (ConcreteArchitecturalModel) cams.get(0);
-//		LOGGER.info("[IMM] manage runtime property CAM ID: " + cam.getCamID());
-//		
-//		//Initialize the component
-//		//ConcreteComponent cc = new ConcreteComponentImpl();
-//		ConcreteComponent cc = Architectural_metamodelFactory.eINSTANCE.createConcreteComponent();
-//		
-//		boolean foundComponent = false;
-//		for(int i = 0; i < cam.getConcreteComponent().size() && foundComponent == false; i++){
-//			if(cam.getConcreteComponent().get(i).getComponentName().equalsIgnoreCase(componentId)){
-//				LOGGER.info("CC NAME: " + cam.getConcreteComponent().get(i).getComponentName());
-//				
-//				cc = cam.getConcreteComponent().get(i);
-//
-//				boolean foundProperty = false;
-//				for(int j = 0; j < cam.getConcreteComponent().get(i).getRuntimeProperty().size() && foundProperty == false; j++){
-//					if(cam.getConcreteComponent().get(i).getRuntimeProperty().get(j).getPropertyID().equalsIgnoreCase(property) == true){
-//
-//						cam.getConcreteComponent().get(i).getRuntimeProperty().get(j).setPropertyValue(value);
-//						
-//						foundProperty = true;
-//					}
-//				}
-//				if(foundProperty == false){
-//
-//					//RuntimeProperty rp = new RuntimePropertyImpl();
-//				  RuntimeProperty rp = Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
-//					rp.setCc(cc);
-//					rp.setPropertyID(property);
-//					rp.setPropertyValue(value);
-//					
-//					cam.getConcreteComponent().get(i).getRuntimeProperty().add(rp);
-//				}
-//				
-//				foundComponent = true;
-//			}
-//		}
-//
-//		session.save(cam);
-//		
-//		//Commit the changes to the database.
-//		session.getTransaction().commit();
-//				  
-//		//Close the session.
-//		session.close();
-//	}
-//	
-//	private String queryComponentPlatform(String componentID) {
-//		SessionFactory sessionFactory = dataStoreCC.getSessionFactory();
-//
-//		//Open a new Session
-//		Session session = sessionFactory.openSession();
-//		  
-//		//Start transaction
-//		session.beginTransaction();
-//				
-//		Query query = session.createQuery("FROM ConcreteComponentSpecification "
-//				+ "WHERE componentID = '" + componentID + "'");
-//
-//		List<?> ccs = query.list();
-//
-//		LOGGER.info("PlataformType -> " + ((ConcreteComponentSpecification) ccs.get(0)).getPackaging().
-//																getImplementation().getPlatformType());
-//				  
-//		//Close the session.
-//		session.close();
-//		
-//		if(ccs.size() == 1)
-//			return ((ConcreteComponentSpecification) ccs.get(0)).getPackaging().getImplementation().
-//																			getPlatformType().toString();
-//		else
-//			return null;
-//	}
-//	
-//	public void getDataStoreFromManageDB() {
-//		dataStore = null;
-//		
-//		ManageArchitectures managArch = null;
-//		Context initialContext;
-//		try
-//		{
-//			initialContext = new InitialContext();
-//			
-//			managArch = (ManageArchitectures)initialContext.lookup("java:module/ManageArchitectures");
-//			dataStore = managArch.getDataStore();
-//		}
-//		catch (Exception e) {
-//			
-//			e.printStackTrace();
-//		}
-//		
-//		if(dataStore == null)
-//			LOGGER.info("[IMM] Error getting the DataStore");
-//		
-//	}
-//	
-//	public void getDataStoreCCFromManageDB() {
-//		dataStoreCC = null;
-//		
-//		ManageDB managdb = null;
-//		Context initialContext;
-//		try
-//		{
-//			initialContext = new InitialContext();
-//			
-//			managdb = (ManageDB)initialContext.lookup("java:module/ManageDB");
-//			dataStoreCC = managdb.getDataStoreCC();
-//		}
-//		catch (NamingException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		if(dataStoreCC == null)
-//			LOGGER.info("[IMM] Error getting the DataStoreConcreteComponent");
-//		
-//	}
-//
-//	public ConcreteArchitecturalModel getCAM(){
-//		return cam;
-//	}
-//
-//	public void setCAM(ConcreteArchitecturalModel cam){
-//		this.cam = cam;
-//	}
 }

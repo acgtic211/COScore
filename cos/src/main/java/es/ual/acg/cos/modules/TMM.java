@@ -1,3 +1,36 @@
+/*
+ * TMM.java -- Módulo de Gestión de Transacción.
+ * Copyright (C) 2016  Alfredo Valero Rodríguez, Javier Criado Rodríguez and Jesús Vallecillos Ruíz
+ *
+ * TMM.java is part of COScore Community.
+ * 
+ * COScore Community is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/gpl.html> or
+ * see  <https://github.com/acgtic211/COScore-Community>.  Or write to
+ * the Free Software Foundation, I51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1335, USA.
+ *
+ *  Authors: Alfredo Valero Rodríguez  Software Developer 
+ *           Javier Criado Rodríguez   Doctor/Researcher/Software Developer
+ *           Jesús Vallecillos Ruíz    Pre-doctoral scholarship holders/Researcher/Software Developer
+ *    Group: ACG 		               Applied Computing Group
+ * Internet: http://acg.ual.es/        
+ *   E-mail: acg.tic211@ual.es        
+ *   Adress: Edif. Científico Técnico, CITE-III
+ *           Universidad de Almería
+ *           Almeria, España
+ *           04120
+*/
 package es.ual.acg.cos.modules;
 
 import java.util.ArrayList;
@@ -42,19 +75,6 @@ public class TMM {
 	private static final Logger LOGGER = Logger.getLogger(TMM.class);
 	
 	private HbDataStore dataStore;
-
-//	public void initialize() {
-//
-//		if(dataStore == null) {
-//			LOGGER.info("[TMM] Getting DataStore...");
-//			this.getDataStoreFromManageDB();
-//			LOGGER.info("[TMM] DataStore has been got");
-//		}
-//		else
-//			LOGGER.info("[TMM] DataStore is already got");
-//	
-//	}
-	
 
 	public GetLinksResult createRountingTable(String userID) {
 
@@ -234,68 +254,6 @@ public class TMM {
 		LOGGER.info("\n\n");
 	}
 
-//	@Lock(LockType.READ)
-//	public void deleteComponent(String idInstance) {
-//		LOGGER.info("[TMM] Delete Instance: " + idInstance);
-//
-//		for(int i = 0; i < cam.getConcreteComponent().size(); i++) {
-//			ConcreteComponent cc = cam.getConcreteComponent().get(i);
-//			
-//			LOGGER.info("-COMPONENT - NAME: " + cc.getComponentName());
-//			
-//			if((cc.getComponentAlias()).equalsIgnoreCase(idInstance)){
-//				cam.getConcreteComponent().remove(i);
-//				LOGGER.info("DELETE - Component: " + cc.getComponentAlias());
-//			}
-//		}
-//	}
-	
-//	public void getDataStoreFromManageDB() {
-//		
-//		dataStore = null;
-//		
-//		ManageArchitectures managArch = null;
-//		Context initialContext;
-//		try
-//		{
-//			initialContext = new InitialContext();
-//			
-//			managArch = (ManageArchitectures)initialContext.lookup("java:module/ManageArchitectures");
-//			dataStore = managArch.getDataStore();
-//		}
-//		catch (Exception e) {
-//			LOGGER.error(e);
-//		}
-//		
-//		if(dataStore == null)
-//			LOGGER.info("[TMM] Error getting the DataStore");
-//		
-//	}
-	
-//	public ConcreteArchitecturalModel getCAM(){
-//		//PRUEBA DE CREACIÓN DE TABLA DE RUTAS
-//		SessionFactory sessionFactory = dataStore.getSessionFactory();
-//
-//		//Open a new Session
-//		Session session = sessionFactory.openSession();
-//		  
-//		//Start transaction
-//		session.beginTransaction();
-//		
-//		Query query = session.createQuery("FROM ConcreteArchitecturalModel WHERE camID = '" + cam.getCamID() + "'");
-//
-//		List<?> cams = query.list();
-//		cam = (ConcreteArchitecturalModel) cams.get(0);
-//		
-//		//Commit the changes to the database.
-//		session.getTransaction().commit();
-//		  
-//		//Close the session.
-//		session.close();
-//		
-//		return cam;
-//	}
-	
 
 	public void setCAM(ConcreteArchitecturalModel cam){
 		this.cam = cam;

@@ -1,5 +1,5 @@
 /*
- * DMM.java -- Modulo que maneja la funcionalidad vinculada con la inicialización de las aplicaciones mashup.
+ * DMM.java -- Módulo de Visualización de Componentes.
  * Copyright (C) 2016  Alfredo Valero Rodríguez, Javier Criado Rodríguez and Jesús Vallecillos Ruíz
  *
  * DMM.java is part of COScore Community.
@@ -65,21 +65,9 @@ import architectural_metamodel.impl.RuntimePropertyImpl;
 public class DMM {
 	
 	private ConcreteArchitecturalModel cam;
-//	private String nodejsURL = "http://192.168.119.183:6969";
-//	private String idDevigce = "computer";
 
 	private static final Logger LOGGER = Logger.getLogger(DMM.class);
 
-//	@PrePassivate
-//	public void prePassivate() {
-//	  LOGGER.info("[DMM] PrePassivate method called");
-//	}
-//
-//	@PreDestroy
-//	public void preDestry() {
-//	  LOGGER.info("[DMM] Pre Destroy method called ");
-//	}
-	
 	private String queryComponentPlatform(String componentID) {
 		String platform = null;
 		try {
@@ -97,7 +85,6 @@ public class DMM {
 	public InterModulesData getCurrentModelforUser(String userID, String camID) {
 		
 		List<ComponentData> resultList = new ArrayList<ComponentData>();
-		//HbDataStore dataStore = null;
 		WidgetData widgetData = null;
 		InterModulesData resultUIM = new InterModulesData();
 		InterModulesData interModulesData = new InterModulesData();
@@ -124,7 +111,6 @@ public class DMM {
 			if (interModulesData.getValue().compareTo("-1") != 0){
 			    ManageArchitectures manageArchitectures = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
 	
-			    //this.setCAM(cam);
 			    cam = manageArchitectures.readModel(camID);
 			    if(cam != null){ //Si el cam existe
 		
@@ -141,7 +127,7 @@ public class DMM {
 						try {
 						
 							if(componentInstance == null ||	componentInstance.equalsIgnoreCase("")){
-								//InitialContext initialContext = new InitialContext();
+
 								ManageWookie wookie = (es.ual.acg.cos.controllers.ManageWookie)initialContext.lookup("java:app/cos/ManageWookie");
 								
 
@@ -295,7 +281,6 @@ public class DMM {
 		WidgetData widgetData = null;
 		UpdateArchitectureResult result = new UpdateArchitectureResult();
 		
-		//InterModulesData resultDMM = new InterModulesData();
 		InterModulesData resultUIM = new InterModulesData();
 		
 		//Fecha y hora
@@ -316,10 +301,6 @@ public class DMM {
 
 			if(cossmng.isUserOnUserEJBMaps(userID) == true){
 			
-				//DMM dmm =cossmng.getUserEJB(userID).getDMMS().get(0);
-				//LRMM lrmm = cossmng.getUserEJB(userID).getLRMM();
-				//IMM imm = cossmng.getUserEJB(userID).getIMM();
-
 				// Update the used time last
 				cossmng.setTime(userID);
 				
@@ -473,25 +454,25 @@ public class DMM {
 																LOGGER.error(e);
 																result.setAllowed(false);
 															result.setMessage("> Error in Register Interaction " + e);
-																//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+
 															}
 															 
 														} catch (Exception e) {
 															LOGGER.error(e);
 															result.setAllowed(false);
 															result.setMessage("> Error in Architectural Models DB " + e);
-															//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+												
 														}
 													}else{ //Errores producidos en UIM y en ManagerUSer
 														result.setAllowed(false);
 														result.setMessage(resultUIM.getMessage());
-														//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+												
 													}
 												} catch (Exception e) {
 													LOGGER.error(e);
 													result.setAllowed(false);
 													result.setMessage("> Error in Component specification BD: " + e);
-													//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+
 												}
 											}else{//Si no es el nuevo componente 
 
@@ -521,7 +502,7 @@ public class DMM {
 									}else{
 										result.setAllowed(false);
 										result.setMessage("> Not found Component");
-										//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+
 									}			
 			                		break;
 			                		
@@ -557,7 +538,7 @@ public class DMM {
 													LOGGER.error(e);
 													result.setAllowed(false);
 													result.setMessage("> Error in Register Interaction " + e);
-													//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+											
 												}
 												
 
@@ -565,12 +546,12 @@ public class DMM {
 												LOGGER.error(e);
 												result.setAllowed(false);
 												result.setMessage("> Error in Architectural Models DB " + e);
-												//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+									
 											}
 										}else{ //Errores producidos en UIM y en ManagerUSer
 											result.setAllowed(false);
 											result.setMessage(resultUIM.getMessage());
-											//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+										
 										}
 										//cambiamos las propidades
 										for(int i = 0; i < newComponentData.size(); i++) {
@@ -589,7 +570,7 @@ public class DMM {
 												LOGGER.error(e);
 												result.setAllowed(false);
 												result.setMessage("> Error in Architectural Models DB " + e);
-												//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+										
 											}	
 										}//fin for
 	                					break;
@@ -665,7 +646,7 @@ public class DMM {
 																	LOGGER.error(e);
 																	result.setAllowed(false);
 																	result.setMessage("> Error in Wookie " + e);
-																	//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+																	
 																}
 															}else{ //resto de servicios de ese componente que no es el nuevo
 																RuntimeProperty runtimePropertyServInsta =  Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();																		
@@ -748,13 +729,13 @@ public class DMM {
 															LOGGER.error(e);
 															result.setAllowed(false);
 														result.setMessage("> Error in Register Interaction " + e);
-															//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+														
 														}
 													} catch (Exception e) {
 														LOGGER.error(e);
 														result.setAllowed(false);
 														result.setMessage("> Error in Architectural Models DB " + e);
-														//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+														
 														
 									            	}
 																break;
@@ -763,8 +744,7 @@ public class DMM {
 																result.setMessage("> Successfully Ungrouped");
 
 																try {
-																	//int newServicesNumber =0;
-																	//int oldServicesNumber=0;
+
 																	
 																	ManageArchitectures manageArchitectures = (es.ual.acg.cos.controllers.ManageArchitectures)initialContext.lookup("java:app/cos/ManageArchitectures");
 																	for(int i = 0; i < newComponentData.size(); i++) {
@@ -859,7 +839,7 @@ public class DMM {
 																	LOGGER.error(e);
 																	result.setAllowed(false);
 																	result.setMessage("> Error in Architectural Models DB " + e);
-																	//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+													
 																	
 												            	}
 
@@ -894,13 +874,13 @@ public class DMM {
 																		LOGGER.error(e);
 																		result.setAllowed(false);
 																	result.setMessage("> Error in Register Interaction " + e);
-																		//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+																
 																	}
 																} catch (Exception e) {
 																	LOGGER.error(e);
 																	result.setAllowed(false);
 																	result.setMessage("> Error in Architectural Models DB " + e);
-																	//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+											
 																	
 												            	}
 
@@ -968,13 +948,13 @@ public class DMM {
 																		LOGGER.error(e);
 																		result.setAllowed(false);
 																	result.setMessage("> Error in Register Interaction " + e);
-																		//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+														
 																	}
 																} catch (Exception e) {
 																	LOGGER.error(e);
 																	result.setAllowed(false);
 																	result.setMessage("> Error in Architectural Models DB " + e);
-																	//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+												
 																
 												            	}
 
@@ -1091,13 +1071,13 @@ public class DMM {
 														LOGGER.error(e);
 														result.setAllowed(false);
 														result.setMessage("> Error in Register Interaction " + e);
-														//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+													
 													}
 												} catch (Exception e) {
 													LOGGER.error(e);
 													result.setAllowed(false);
 													result.setMessage("> Error in Architectural Models DB " + e);
-													//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+											
 												}
 											}else{ //Errores producidos en UIM y en ManagerUSer
 												result.setAllowed(false);
@@ -1130,7 +1110,7 @@ public class DMM {
 											        		LOGGER.error(e);
 															result.setAllowed(false);
 															result.setMessage("> Error in Component specification BD: " + e);
-															//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+														
 														}	
 
 															//codeHTML
@@ -1217,7 +1197,7 @@ public class DMM {
 															}else{ //Errores producidos en UIM y en ManagerUSer
 																result.setAllowed(false);
 																result.setMessage(resultUIM.getMessage());
-																//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
+															
 															}
 													}else{ //Si no es el nuevo que se crea se modifican las posiciones
 														RuntimeProperty runtimePropertyX = Architectural_metamodelFactory.eINSTANCE.createRuntimeProperty();
@@ -1326,7 +1306,6 @@ public class DMM {
 			LOGGER.error(e);
 			result.setMessage("> Internal Server Error");
 			result.setAllowed(false);
-			//result.setOldComponentData(this.getCurrentModelforUser(userID,null).getModel());
 		}
 		return result;
 	}

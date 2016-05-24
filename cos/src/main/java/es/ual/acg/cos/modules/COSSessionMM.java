@@ -1,5 +1,5 @@
 /*
- * COSSessionMM.java -- Modulo que maneja la funcionalidad vinculada con la inicialización de las aplicaciones mashup.
+ * COSSessionMM.java -- Módulo de Gestión de Sesiones del COSCore.
  * Copyright (C) 2016  Alfredo Valero Rodríguez, Javier Criado Rodríguez and Jesús Vallecillos Ruíz
  *
  * COSSessionMM.java is part of COScore Community.
@@ -114,7 +114,6 @@ public class COSSessionMM {
 				
 				//Inicializo las variables de sesión (los EJBS para el usuario validado)
 				if(userEJBMap.containsKey(qur.getIduser()+"") == false){
-					//UserEJBs uejb = new UserEJBs(qur.getIduser()+"");
 					UserEJBs uejb = new UserEJBs();
 					userEJBMap.put(qur.getIduser()+"", uejb);
 					userTime.put(qur.getIduser()+"", System.currentTimeMillis());
@@ -340,7 +339,6 @@ public DefaultInitSessionResult initAnonimous(){
 		return result;
 	}
 	public void setTime(String userID){
-		//sc.userTime.replace(userID, System.currentTimeMillis());
 		sc.userTime.remove(userID);
 		sc.userTime.put(userID, System.currentTimeMillis());
 	}

@@ -1,5 +1,5 @@
 /*
- * UpdateUserParams.java -- Estructura con los parametos de entrada de la operacion UpdateUser.
+ * UpdateUserParams.java -- Estructura con los parametos de entrada de la operacion UpdateUser. 
  * Copyright (C) 2016  Alfredo Valero Rodríguez and Javier Criado Rodríguez
  *
  * UpdateUserParams.java is part of COScore Community.

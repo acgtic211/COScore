@@ -1,4 +1,36 @@
-
+/*
+ * ManageComponentWSImpl.java -- Web service Manage Component - Servicio encargado de manejar las especificaciones de componentes que constituyen las aplicaciones mashup.
+ * Copyright (C) 2016  Alfredo Valero Rodríguez, Javier Criado Rodríguez and Jesús Vallecillos Ruíz
+ *
+ * ManageComponentWSImpl.java is part of COScore Community.
+ * 
+ * COScore Community is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/gpl.html> or
+ * see  <https://github.com/acgtic211/COScore-Community>.  Or write to
+ * the Free Software Foundation, I51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1335, USA.
+ *
+ *  Authors: Alfredo Valero Rodríguez  Software Developer 
+ *           Javier Criado Rodríguez   Doctor/Researcher/Software Developer
+ *           Jesús Vallecillos Ruíz    Pre-doctoral scholarship holders/Researcher/Software Developer
+ *    Group: ACG 		               Applied Computing Group
+ * Internet: http://acg.ual.es/        
+ *   E-mail: acg.tic211@ual.es        
+ *   Adress: Edif. Científico Técnico, CITE-III
+ *           Universidad de Almería
+ *           Almeria, España
+ *           04120
+*/
 package es.ual.acg.cos.ws;
 
 import javax.jws.WebService;
@@ -8,23 +40,23 @@ import javax.naming.NamingException;
 
 import org.jboss.logging.Logger;
 
-import es.ual.acg.cos.controllers.ManageRegister;
+import es.ual.acg.cos.controllers.ManageComponentSpecifications;
 
 
-@WebService(endpointInterface = "es.ual.acg.cos.ws.RegisterWS")
-public class RegisterWSImpl implements RegisterWS
+@WebService(endpointInterface = "es.ual.acg.cos.ws.ManageComponentWS")
+public class ManageComponentWSImpl implements ManageComponentWS
 {
-	private static final Logger LOGGER = Logger.getLogger(RegisterWSImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(ManageComponentWSImpl.class);
 
 	public String exportCCFromURI(String ccFileType, String ccFileURI)
 	{
 		String result = "No results obtained";
 
-		ManageRegister register = null;
+		ManageComponentSpecifications register = null;
 		try
 		{
 			Context initialContext = new InitialContext();
-			register = (ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+			register = (ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageComponentSpecification");
 			result = register.exportCCFromURI(ccFileType, ccFileURI);
 		}
 		catch (NamingException e) {
@@ -40,11 +72,11 @@ public class RegisterWSImpl implements RegisterWS
 	{
 		String result = "No results obtained";
 
-		ManageRegister register = null;
+		ManageComponentSpecifications register = null;
 		try
 		{
 			Context initialContext = new InitialContext();
-			register = (ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+			register = (ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageComponentSpecification");
 			result = register.exportCCFromString(ccFileType, ccFileString);
 		}
 		catch (NamingException e) {
@@ -60,11 +92,11 @@ public class RegisterWSImpl implements RegisterWS
 	{
 		String result = "No results obtained";
 
-		ManageRegister register = null;
+		ManageComponentSpecifications register = null;
 		try
 		{
 			Context initialContext = new InitialContext();
-			register = (ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+			register = (ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageComponentSpecification");
 			result = register.exportACFromString(acFileType, acFileString);
 		}
 		catch (NamingException e) {
@@ -81,11 +113,11 @@ public class RegisterWSImpl implements RegisterWS
 	{
 		String result = "No results obtained";
 
-		ManageRegister register = null;
+		ManageComponentSpecifications register = null;
 		try
 		{
 			Context initialContext = new InitialContext();
-			register = (ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+			register = (ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageComponentSpecification");
 			result = register.withdrawCC(ccID);
 		}
 		catch (NamingException e) {
@@ -102,11 +134,11 @@ public class RegisterWSImpl implements RegisterWS
 	{
 		String result = "No results obtained";
 
-		ManageRegister register = null;
+		ManageComponentSpecifications register = null;
 		try
 		{
 			Context initialContext = new InitialContext();
-			register = (ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+			register = (ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageComponentSpecification");
 			result = register.withdrawAC(acID);
 		}
 		catch (NamingException e) {
@@ -120,11 +152,11 @@ public class RegisterWSImpl implements RegisterWS
 	
 	public void registerExampleComponents()
 	{
-		ManageRegister register = null;
+		ManageComponentSpecifications register = null;
 		try
 		{
 			Context initialContext = new InitialContext();
-			register = (ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+			register = (ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageComponentSpecification");
 			register.registerExampleComponents();
 		}
 		catch (NamingException e) {
@@ -146,12 +178,12 @@ public class RegisterWSImpl implements RegisterWS
 			String dependencyInterfaceId, String[] requiredProvided, String[] interfaceId,
 			String[] interfaceDescription, String[] anyUri) {
 		
-		ManageRegister register = null;
+		ManageComponentSpecifications register = null;
 		try
 		{
 
 			Context initialContext = new InitialContext();
-			register = (ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+			register = (ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageComponentSpecification");
 
 			register.exportCCFromParams(componentName, componentAlias, componentDescription, entityId, entityName, entityDescription, contactDescription,
 					personName, email, phone, address,

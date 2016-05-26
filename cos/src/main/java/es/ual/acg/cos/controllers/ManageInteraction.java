@@ -286,13 +286,13 @@ public class ManageInteraction {
 	public void getDataStoreCCFromManageDB() {
 		dataStoreCC = null;
 		
-		ManageRegister managdb = null;
+		ManageComponentSpecifications managdb = null;
 		Context initialContext;
 		try
 		{
 			initialContext = new InitialContext();
 			
-			managdb = (ManageRegister)initialContext.lookup("java:module/ManageRegister");
+			managdb = (ManageComponentSpecifications)initialContext.lookup("java:module/ManageRegister");
 			dataStoreCC = managdb.getDataStoreCC();
 		}
 		catch (NamingException e) {

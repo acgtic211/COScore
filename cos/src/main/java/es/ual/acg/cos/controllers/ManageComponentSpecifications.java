@@ -1,5 +1,5 @@
 /*
- * ManageRegister.java -- Gestiona la base de datos de modelos de arquitecturas de las aplicaciones mashup.
+ * ManageRegister.java -- Gestiona la base de datos de ....
  * Copyright (C) 2016  Alfredo Valero Rodríguez, Javier Criado Rodríguez and Jesús Vallecillos Ruíz
  *
  * ManageRegister.java is part of COScore Community.
@@ -112,14 +112,14 @@ import ccmm.impl.WSDLSpecificationImpl;
 @Singleton
 @Startup
 @Lock(LockType.READ)
-public class ManageRegister
+public class ManageComponentSpecifications
 {
 	private HbDataStore dataStoreAC;
 	private HbDataStore dataStoreCC;
 	private boolean dataStoreACOn = false;
 	private boolean dataStoreCCOn = true;
 	
-	private static final Logger LOGGER = Logger.getLogger(ManageRegister.class);
+	private static final Logger LOGGER = Logger.getLogger(ManageComponentSpecifications.class);
 	
 	@PostConstruct
 	private void initializateDataStores()

@@ -1,6 +1,6 @@
 /*
  * ManageJava.java -- Gestiona la base de datos de componentes e instancias de tipo Java.
- * Copyright (C) 2016  Alfredo Valero Rodríguez, Javier Criado Rodríguez and Jesús Vallecillos Ruíz
+ * Copyright (C) 2016  Javier Criado Rodríguez and Jesús Vallecillos Ruíz
  *
  * ManageJava.java is part of COScore Community.
  * 
@@ -20,8 +20,7 @@
  * the Free Software Foundation, I51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1335, USA.
  *
- *  Authors: Alfredo Valero Rodríguez  Software Developer 
- *           Javier Criado Rodríguez   Doctor/Researcher/Software Developer
+ *  Authors: Javier Criado Rodríguez   Doctor/Researcher/Software Developer
  *           Jesús Vallecillos Ruíz    Pre-doctoral scholarship holders/Researcher/Software Developer
  *    Group: ACG 		               Applied Computing Group
  * Internet: http://acg.ual.es/        

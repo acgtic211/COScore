@@ -45,7 +45,7 @@ import javax.naming.NamingException;
 import org.jboss.logging.Logger;
 
 import es.ual.acg.cos.controllers.ManageArchitectures;
-import es.ual.acg.cos.controllers.ManageRegister;
+import es.ual.acg.cos.controllers.ManageComponentSpecifications;
 import es.ual.acg.cos.controllers.ManageWookie;
 import es.ual.acg.cos.types.ComponentData;
 import es.ual.acg.cos.types.InterModulesData;
@@ -72,7 +72,7 @@ public class DMM {
 		String platform = null;
 		try {
 			InitialContext initialContext = new InitialContext();
-			ManageRegister mr = (es.ual.acg.cos.controllers.ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+			ManageComponentSpecifications mr = (es.ual.acg.cos.controllers.ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageRegister");
 			platform = mr.queryComponentPlatform(componentID);
 
 		} catch (Exception e) {
@@ -352,7 +352,7 @@ public class DMM {
 												}
 												try {
 													//4.- Completo el resto de campos que no me viene por parametros del nuevo componente
-													ManageRegister manageRegister = (es.ual.acg.cos.controllers.ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+													ManageComponentSpecifications manageRegister = (es.ual.acg.cos.controllers.ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageRegister");
 													List<RuntimeProperty> runtimePropertyList = manageRegister.readComponentProperty(newcomponentName);
 														
 													//codeHTML
@@ -1102,7 +1102,7 @@ public class DMM {
 														List<RuntimeProperty> runtimePropertyList = new ArrayList<RuntimeProperty>();
 											        	try {
 															//4.- Completo el resto de campos que no me viene por parametros del nuevo componente
-															ManageRegister manageRegister = (es.ual.acg.cos.controllers.ManageRegister)initialContext.lookup("java:app/cos/ManageRegister");
+															ManageComponentSpecifications manageRegister = (es.ual.acg.cos.controllers.ManageComponentSpecifications)initialContext.lookup("java:app/cos/ManageRegister");
 															runtimePropertyList = manageRegister.readComponentProperty(newComponentData.get(i).getServicios().get(0).getComponentname());
 
 											        	} catch (Exception e) {

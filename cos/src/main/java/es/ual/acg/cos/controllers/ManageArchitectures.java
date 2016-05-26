@@ -1,5 +1,5 @@
 /*
- * ManageArchitectures.java -- Gestiona la base de datos de modelos de arquitecturas de las aplicaciones mashup.
+ * ManageArchitectures.java -- Gestiona la base de datos de modelos de arquitecturas.
  * Copyright (C) 2016  Alfredo Valero Rodríguez, Javier Criado Rodríguez and Jesús Vallecillos Ruíz
  *
  * ManageArchitectures.java is part of COScore Community.

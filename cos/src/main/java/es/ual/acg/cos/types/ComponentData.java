@@ -1,3 +1,36 @@
+/*
+ * ComponentData.java -- Estructura que almacena un conjunto de propiedades para cada componente de la arquitectura
+ * Copyright (C) 2016  Alfredo Valero Rodríguez, Javier Criado Rodríguez and Jesús Vallecillos Ruíz
+ *
+ * ComponentData.java is part of COScore Community.
+ * 
+ * COScore Community is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/gpl.html> or
+ * see  <https://github.com/acgtic211/COScore-Community>.  Or write to
+ * the Free Software Foundation, I51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1335, USA.
+ *
+ *  Authors: Alfredo Valero Rodríguez  Software Developer 
+ *           Javier Criado Rodríguez   Doctor/Researcher/Software Developer
+ *           Jesús Vallecillos Ruíz    Pre-doctoral scholarship holders/Researcher/Software Developer
+ *    Group: ACG 		               Applied Computing Group
+ * Internet: http://acg.ual.es/        
+ *   E-mail: acg.tic211@ual.es        
+ *   Adress: Edif. Científico Técnico, CITE-III
+ *           Universidad de Almería
+ *           Almeria, España
+ *           04120
+*/
 package es.ual.acg.cos.types;
 
 import java.util.List;
@@ -11,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 					"numero_servicios", "servicios"})
 public class ComponentData {
 
-	private String platform; //Plataforma a ala que esta sirviendo web, java, ...  *(Almacenado en BD de especificación del componente concreto)
+	private String platform; //Plataforma a la que esta sirviendo web, java, ...  *(Almacenado en BD de especificación del componente concreto)
 	private String componentname; //Nombre del componente (antiguo componentID) EJ: http://acg.ual.es/wookie/widgets/OGC-RENPA-EENNPP *(Almacenado en BD de especificación del componente concreto  y BD especificacion de arquitectura concreta)
 	private String componentAlias; //Alias de la instancia componente EJ: OGC-RENPA-EENNPP2334  *(Almacenado en BD de especificación del componente concreto y BD especificacion de arquitectura concreta)
 	private String instanceId; //Instancia del componente EJ: '0H2Y40tUByKUPvgkVITSFT9CvMY.eq.' *(Almacenada en BD especificacion de arquitectura concreta)

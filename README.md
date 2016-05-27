@@ -1,3 +1,3 @@
-## COScore (desarrollo)
+## COScore Community
 
-Este repositorio de GitLab contiene el código (versión de desarrollo) del proyecto COScore de ENIA
+Este repositorio de Git contiene el código (versión de desarrollo) del proyecto COScore Community
